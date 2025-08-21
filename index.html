@@ -1231,7 +1231,7 @@
                         </div>
                         <div>
                             <strong>Telefon:</strong><br>
-                            +90 04428163005
+                            04428163005
                         </div>
                     </div>
 
@@ -1257,27 +1257,7 @@
                     </div>
                 </div>
 
-                <div class="contact-form">
-                     <form id="contactForm">
-                         <div class="form-group">
-                             <label for="name">Adınız Soyadınız</label>
-                             <input type="text" id="name" name="name" placeholder="Adınızı girin" required>
-                         </div>
-                         <div class="form-group">
-                             <label for="email">E-mail</label>
-                             <input type="email" id="email" name="email" placeholder="E-mail adresinizi girin" required>
-                         </div>
-                         <div class="form-group">
-                             <label for="phone">Telefon</label>
-                             <input type="tel" id="phone" name="phone" placeholder="Telefon numaranızı girin">
-                         </div>
-                         <div class="form-group">
-                             <label for="message">Mesajınız</label>
-                             <textarea id="message" name="message" rows="5" placeholder="Mesajınızı yazın" required></textarea>
-                         </div>
-                         <button type="submit" class="submit-btn">Mesaj Gönder</button>
-                     </form>
-                 </div>
+
             </div>
         </div>
     </section>
@@ -1358,27 +1338,7 @@
             });
         });
 
-                 // Form submission
-         const contactForm = document.getElementById('contactForm');
-         if (contactForm) {
-             contactForm.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            // Simple form validation
-            const formData = new FormData(this);
-            const name = formData.get('name');
-            const email = formData.get('email');
-            const message = formData.get('message');
-            
-            if (!name || !email || !message) {
-                alert('Lütfen tüm zorunlu alanları doldurun.');
-                return;
-            }
-                         
-             alert('Mesajınız alınmıştır! En kısa sürede size dönüş yapacağız.');
-             this.reset();
-         });
-         }
+
 
         // Enhanced animation on scroll with throttling
         const observerOptions = {
