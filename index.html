@@ -756,6 +756,25 @@
             .pdf-controls {
                 display: none;
             }
+            
+            /* Hide PDF preview generation on mobile */
+            .pdf-preview {
+                height: 120px;
+                background: linear-gradient(45deg, #34495e, #2c3e50);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .pdf-preview canvas {
+                display: none;
+            }
+            
+            .pdf-preview-placeholder {
+                color: white;
+                font-size: 2rem;
+                text-align: center;
+            }
         }
 
         .pdf-modal.ultra-fullscreen .pdf-viewer {
@@ -1644,14 +1663,27 @@
             }
         }
 
-        // Generate PDF preview thumbnail
+        // Generate PDF preview thumbnail (skip on mobile for performance)
         async function generatePDFPreview(pdfPath, cardId) {
+            // Skip preview generation on mobile devices for better performance
+            if (isMobileDevice()) {
+                const previewContainer = document.getElementById(`preview-${cardId}`);
+                if (previewContainer) {
+                    previewContainer.innerHTML = `
+                        <div class="pdf-preview-placeholder">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfPath);
                 const pdf = await loadingTask.promise;
                 const page = await pdf.getPage(1);
 
-                const scale = window.innerWidth < 768 ? 0.4 : 0.5;
+                const scale = 0.5;
                 const viewport = page.getViewport({ scale: scale });
 
                 const canvas = document.createElement('canvas');
@@ -1860,12 +1892,16 @@
                 pdfViewer.innerHTML = '';
                 pdfViewer.appendChild(pagesContainer);
                 
-                // Apply zoom transform if in ultra fullscreen
-                if (isUltraFullscreen) {
-                    pagesContainer.style.transformOrigin = 'top center';
+                // Apply zoom transform
+                pagesContainer.style.transformOrigin = 'center center';
+                pagesContainer.style.willChange = 'transform';
+                
+                if (currentScale !== 1 || currentTranslateX !== 0 || currentTranslateY !== 0) {
                     const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
                     pagesContainer.style.transform = transform;
                     pagesContainer.style.transition = 'transform 0.1s ease-out';
+                } else {
+                    pagesContainer.style.transform = 'none';
                 }
                 
             } catch (error) {
@@ -2015,7 +2051,8 @@
                 if (container) {
                     const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
                     container.style.transform = transform;
-                    container.style.transformOrigin = 'top center';
+                    container.style.transformOrigin = 'center center';
+                    container.style.willChange = 'transform';
                 }
             } else {
                 // Desktop: Apply transform to single canvas
@@ -2023,6 +2060,8 @@
                 if (canvas) {
                     const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
                     canvas.style.transform = transform;
+                    canvas.style.transformOrigin = 'center center';
+                    canvas.style.willChange = 'transform';
                 }
             }
         }
@@ -2124,9 +2163,13 @@
                 
                 // Disable smooth transition during pinch
                 const container = document.querySelector('#pdfViewer > div') || document.querySelector('#pdfViewer canvas');
-                if (container) container.style.transition = 'none';
+                if (container) {
+                    container.style.transition = 'none';
+                    container.style.willChange = 'transform';
+                }
                 
                 e.preventDefault();
+                e.stopPropagation();
             } else if (e.touches.length === 1) {
                 if ((isMobile && currentScale > 1) || (isUltraFullscreen && currentScale > 1)) {
                     // Single finger pan start (mobile: anytime if zoomed, desktop: only in ultra fullscreen if zoomed)
@@ -2137,7 +2180,12 @@
                     
                     // Disable smooth transition during pan
                     const container = document.querySelector('#pdfViewer > div') || document.querySelector('#pdfViewer canvas');
-                    if (container) container.style.transition = 'none';
+                    if (container) {
+                        container.style.transition = 'none';
+                        container.style.willChange = 'transform';
+                    }
+                    
+                    e.preventDefault();
                 } else {
                     // Normal touch for navigation
                     touchStartX = e.touches[0].clientX;
@@ -2157,12 +2205,21 @@
             if (isPinching && e.touches.length === 2) {
                 // Handle pinch zoom (both mobile and desktop)
                 const currentDistance = getDistance(e.touches);
-                if (initialDistance > 0) {
+                if (initialDistance > 0 && currentDistance > 0) {
                     const scaleChange = currentDistance / initialDistance;
-                    currentScale = Math.max(0.5, Math.min(5, initialScale * scaleChange));
+                    const newScale = initialScale * scaleChange;
+                    
+                    // More sensitive scaling for mobile
+                    if (isMobile) {
+                        currentScale = Math.max(0.3, Math.min(8, newScale));
+                    } else {
+                        currentScale = Math.max(0.5, Math.min(5, newScale));
+                    }
+                    
                     applyCanvasTransform();
                 }
                 e.preventDefault();
+                e.stopPropagation();
             } else if (isPanning && e.touches.length === 1) {
                 // Handle pan (both mobile and desktop, but mobile works differently)
                 const deltaX = e.touches[0].clientX - lastPanX;
@@ -2178,6 +2235,7 @@
                     
                     applyCanvasTransform();
                     e.preventDefault();
+                    e.stopPropagation();
                 }
             }
         }, { passive: false });
@@ -2289,10 +2347,14 @@
             }
         }, { passive: true });
 
-        // Mouse wheel zoom support for desktop
+        // Mouse wheel zoom support for desktop only
         document.getElementById('pdfViewer').addEventListener('wheel', function(e) {
             const modal = document.getElementById('pdfModal');
             const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            const isMobile = isMobileDevice();
+            
+            // Skip on mobile devices
+            if (isMobile) return;
             
             if (isUltraFullscreen && e.ctrlKey) {
                 e.preventDefault();
