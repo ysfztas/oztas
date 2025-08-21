@@ -724,25 +724,31 @@
             box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
         }
 
-        /* Mobile-Optimized PDF Modal */
+        /* Fullscreen PDF Modal */
         .pdf-modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
+            width: 100vw;
+            height: 100vh;
+            background: #000;
             z-index: 2000;
-                         overflow: auto;
+            overflow: hidden;
+        }
+
+        .pdf-modal.fullscreen {
+            width: 100vw;
+            height: 100vh;
+            background: #000;
         }
 
         .pdf-modal-content {
             position: relative;
             margin: 0;
-            width: 100%;
-            height: 100%;
-            background: white;
+            width: 100vw;
+            height: 100vh;
+            background: #000;
             display: flex;
             flex-direction: column;
         }
@@ -804,13 +810,16 @@
             flex: 1;
             overflow: auto;
             text-align: center;
-            padding: 1rem;
-            background: #f8f9fa;
+            padding: 0.5rem;
+            background: #000;
             position: relative;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .pdf-viewer::before,
@@ -849,10 +858,12 @@
         }
 
         .pdf-controls {
-            background: white;
-            padding: 1rem;
+            background: rgba(0, 0, 0, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 0.8rem;
             text-align: center;
-            border-top: 1px solid #dee2e6;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
             flex-shrink: 0;
             position: sticky;
             bottom: 0;
@@ -892,7 +903,7 @@
 
         .page-info {
             font-weight: 500;
-            color: #2c3e50;
+            color: white;
             font-size: 0.95rem;
             white-space: nowrap;
         }
@@ -996,15 +1007,11 @@
             }
 
             .pdf-modal-content {
-                margin: 2rem;
-                width: calc(100% - 4rem);
-                height: calc(100% - 4rem);
-                border-radius: 15px;
+                margin: 0;
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
                 overflow: hidden;
-            }
-
-            .pdf-controls {
-                position: static;
             }
         }
 
@@ -1430,7 +1437,8 @@
                  // Available PDF files in pdfs folder (GitHub Pages ready)
          const commonPDFFiles = [
              'genel-katalog.pdf',
-             'TOC_W07.pdf'
+             'TOC_W07.pdf',
+             'Erendemir Katalog.pdf'
          ];
 
         // Initialize PDF catalog on page load
@@ -1496,11 +1504,41 @@
             `;
         }
 
-        // Detect available PDF files
+        // Detect available PDF files - Enhanced to find more PDFs
         async function detectPDFFiles() {
             const availablePDFs = [];
-
+            
+            // First, try the known PDF files
             for (const filename of commonPDFFiles) {
+                try {
+                    const response = await fetch(`pdfs/${filename}`, { method: 'HEAD' });
+                    if (response.ok) {
+                        availablePDFs.push(filename);
+                    }
+                } catch (error) {
+                    // File doesn't exist, continue
+                }
+            }
+
+            // Try to find additional common PDF names that might exist
+            const additionalPDFNames = [
+                'katalog.pdf',
+                'catalog.pdf',
+                'urunler.pdf',
+                'products.pdf',
+                'fiyat-listesi.pdf',
+                'price-list.pdf',
+                'yatak-odasi-katalog.pdf',
+                'oturma-odasi-katalog.pdf',
+                'yemek-odasi-katalog.pdf',
+                'mobilya-katalog.pdf',
+                'furniture-catalog.pdf'
+            ];
+
+            for (const filename of additionalPDFNames) {
+                // Skip if already found
+                if (availablePDFs.includes(filename)) continue;
+                
                 try {
                     const response = await fetch(`pdfs/${filename}`, { method: 'HEAD' });
                     if (response.ok) {
@@ -1621,11 +1659,19 @@
                 .replace(/\.pdf$/i, '')
                 .replace(/[-_]/g, ' ')
                 .replace(/\b\w/g, l => l.toUpperCase())
-                .replace(/Katalog/g, 'Kataloğu')
-                .replace(/Odasi/g, 'Odası')
-                .replace(/Uniteleri/g, 'Üniteleri')
-                .replace(/Sistemleri/g, 'Sistemleri')
-                .replace(/Fiyat Listesi/g, 'Fiyat Listesi');
+                // Turkish character corrections and word formatting
+                .replace(/Katalog/gi, 'Kataloğu')
+                .replace(/Odasi/gi, 'Odası')  
+                .replace(/Uniteleri/gi, 'Üniteleri')
+                .replace(/Sistemleri/gi, 'Sistemleri')
+                .replace(/Fiyat Listesi/gi, 'Fiyat Listesi')
+                .replace(/Genel/gi, 'Genel')
+                .replace(/Erendemir/gi, 'Erendemir')
+                .replace(/Toc/gi, 'TOC')
+                .replace(/W0(\d)/gi, 'W0$1')
+                // Add "Kataloğu" to standalone brand/category names
+                .replace(/^(Erendemir)$/gi, '$1 Kataloğu')
+                .replace(/^(Genel)$/gi, '$1 Katalog');
         }
 
         // Format file size
@@ -1637,26 +1683,41 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Open PDF in modal - Mobile Optimized
+        // Open PDF in fullscreen modal - Mobile Optimized
         async function openPDFModal(pdfPath, title) {
             const modal = document.getElementById('pdfModal');
             const modalTitle = document.getElementById('modalTitle');
             const pdfViewer = document.getElementById('pdfViewer');
 
             modalTitle.textContent = title;
-            pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto;"></div>';
+            pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
             modal.style.display = 'block';
+            modal.classList.add('fullscreen');
             
-            // Prevent body scroll on mobile
+            // Prevent body scroll
             document.body.style.overflow = 'hidden';
 
-            // Try to lock screen orientation to landscape on mobile devices
+            // Request fullscreen mode
+            try {
+                if (modal.requestFullscreen) {
+                    await modal.requestFullscreen();
+                } else if (modal.webkitRequestFullscreen) {
+                    await modal.webkitRequestFullscreen();
+                } else if (modal.mozRequestFullScreen) {
+                    await modal.mozRequestFullScreen();
+                } else if (modal.msRequestFullscreen) {
+                    await modal.msRequestFullscreen();
+                }
+            } catch (error) {
+                console.log('Fullscreen request failed:', error);
+            }
+
+            // Force landscape orientation on mobile devices
             try {
                 if (screen.orientation && screen.orientation.lock) {
                     await screen.orientation.lock('landscape');
                 }
             } catch (error) {
-                // Orientation lock not supported or failed, continue normally
                 console.log('Screen orientation lock not supported or failed');
             }
 
@@ -1671,7 +1732,7 @@
             } catch (error) {
                 console.error('Error loading PDF:', error);
                 pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+                    <div style="text-align: center; padding: 2rem; color: white;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
                         <h3 style="margin-bottom: 0.5rem;">PDF Yüklenemedi</h3>
                         <p style="font-size: 0.9rem;">Dosya bulunamadı veya bozuk olabilir.</p>
@@ -1680,15 +1741,21 @@
             }
         }
 
-        // Render specific PDF page - Mobile Optimized
+        // Render PDF page optimized for fullscreen landscape mode
         async function renderPDFPage(pageNum) {
             try {
                 const page = await currentPDFDoc.getPage(pageNum);
+                const pdfViewer = document.getElementById('pdfViewer');
                 
-                // Calculate optimal scale for mobile
-                const viewerWidth = document.getElementById('pdfViewer').clientWidth - 32; // Account for padding
+                // Calculate optimal scale for fullscreen landscape viewing
+                const viewerWidth = pdfViewer.clientWidth - 16; // Account for padding
+                const viewerHeight = pdfViewer.clientHeight - 16;
                 const viewport = page.getViewport({ scale: 1 });
-                const scale = Math.min(viewerWidth / viewport.width, window.innerWidth < 768 ? 1.2 : 1.5);
+                
+                // Calculate scale to fit both width and height, with preference for width in landscape
+                const scaleX = viewerWidth / viewport.width;
+                const scaleY = viewerHeight / viewport.height;
+                const scale = Math.min(scaleX, scaleY);
                 
                 const scaledViewport = page.getViewport({ scale: scale });
 
@@ -1696,6 +1763,13 @@
                 const context = canvas.getContext('2d');
                 canvas.height = scaledViewport.height;
                 canvas.width = scaledViewport.width;
+                
+                // Style canvas for fullscreen viewing
+                canvas.style.maxWidth = '100%';
+                canvas.style.maxHeight = '100%';
+                canvas.style.objectFit = 'contain';
+                canvas.style.boxShadow = '0 8px 32px rgba(255,255,255,0.1)';
+                canvas.style.borderRadius = '4px';
 
                 const renderContext = {
                     canvasContext: context,
@@ -1703,21 +1777,21 @@
                 };
 
                 // Show loading while rendering
-                const pdfViewer = document.getElementById('pdfViewer');
-                pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto;"></div>';
+                pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
 
                 await page.render(renderContext).promise;
 
                 pdfViewer.innerHTML = '';
                 pdfViewer.appendChild(canvas);
 
-                // Scroll to top of viewer
+                // Center the canvas in the viewer
                 pdfViewer.scrollTop = 0;
+                pdfViewer.scrollLeft = 0;
             } catch (error) {
                 console.error('Error rendering page:', error);
                 const pdfViewer = document.getElementById('pdfViewer');
                 pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+                    <div style="text-align: center; padding: 2rem; color: white;">
                         <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
                         <p>Sayfa yüklenemiyor</p>
                     </div>
@@ -1756,10 +1830,27 @@
             }
         }
 
-        // Close PDF modal
+        // Close PDF modal and exit fullscreen
         function closePDFModal() {
             const modal = document.getElementById('pdfModal');
+            
+            // Exit fullscreen mode
+            try {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                } else if (document.mozCancelFullScreen) {
+                    document.mozCancelFullScreen();
+                } else if (document.msExitFullscreen) {
+                    document.msExitFullscreen();
+                }
+            } catch (error) {
+                console.log('Exit fullscreen failed:', error);
+            }
+            
             modal.style.display = 'none';
+            modal.classList.remove('fullscreen');
             currentPDFDoc = null;
             
             // Restore body scroll
@@ -1771,7 +1862,6 @@
                     screen.orientation.unlock();
                 }
             } catch (error) {
-                // Orientation unlock not supported or failed
                 console.log('Screen orientation unlock not supported or failed');
             }
         }
@@ -1864,6 +1954,26 @@
                 }
             }, 250);
         }, { passive: true });
+
+        // Handle fullscreen change events
+        function handleFullscreenChange() {
+            const modal = document.getElementById('pdfModal');
+            const isFullscreen = !!(document.fullscreenElement || 
+                                   document.webkitFullscreenElement || 
+                                   document.mozFullScreenElement || 
+                                   document.msFullscreenElement);
+            
+            // If we're no longer in fullscreen and the modal is open, close it
+            if (!isFullscreen && modal.style.display === 'block') {
+                closePDFModal();
+            }
+        }
+
+        // Add fullscreen change event listeners
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
+        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     </script>
 </body>
 </html>
