@@ -743,6 +743,32 @@
             background: #000;
         }
 
+        .pdf-modal.ultra-fullscreen .pdf-modal-header {
+            display: none;
+        }
+
+        .pdf-modal.ultra-fullscreen .pdf-controls {
+            display: none;
+        }
+
+        .pdf-modal.ultra-fullscreen .pdf-viewer {
+            padding: 0;
+            overflow: auto;
+            height: 100vh;
+            display: block;
+            align-items: flex-start;
+            justify-content: flex-start;
+        }
+
+        .pdf-modal.ultra-fullscreen .pdf-viewer canvas {
+            display: block;
+            margin: 0 auto;
+            max-width: none;
+            width: auto;
+            height: auto;
+            min-width: 100vw;
+        }
+
         .pdf-modal-content {
             position: relative;
             margin: 0;
@@ -1196,7 +1222,7 @@
             <div class="pdf-modal-header">
                 <div>
                     <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
-                    <div class="pdf-help-text">Yan tarafları dokunun veya kaydırın</div>
+                    <div class="pdf-help-text">Yan tarafları dokunun, ortaya basın veya kaydırın</div>
                 </div>
                 <button class="pdf-close" onclick="closePDFModal()" aria-label="Kapat">&times;</button>
             </div>
@@ -1746,30 +1772,49 @@
             try {
                 const page = await currentPDFDoc.getPage(pageNum);
                 const pdfViewer = document.getElementById('pdfViewer');
+                const modal = document.getElementById('pdfModal');
+                const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
                 
-                // Calculate optimal scale for fullscreen landscape viewing
-                const viewerWidth = pdfViewer.clientWidth - 16; // Account for padding
-                const viewerHeight = pdfViewer.clientHeight - 16;
-                const viewport = page.getViewport({ scale: 1 });
+                let scale, scaledViewport;
                 
-                // Calculate scale to fit both width and height, with preference for width in landscape
-                const scaleX = viewerWidth / viewport.width;
-                const scaleY = viewerHeight / viewport.height;
-                const scale = Math.min(scaleX, scaleY);
-                
-                const scaledViewport = page.getViewport({ scale: scale });
+                if (isUltraFullscreen) {
+                    // Ultra fullscreen mode - make PDF larger and scrollable
+                    const viewport = page.getViewport({ scale: 1 });
+                    // Use a higher scale for ultra fullscreen to make text more readable
+                    scale = Math.max(window.innerWidth / viewport.width * 1.2, 2.0);
+                    scaledViewport = page.getViewport({ scale: scale });
+                } else {
+                    // Normal fullscreen mode - fit to screen
+                    const viewerWidth = pdfViewer.clientWidth - 16;
+                    const viewerHeight = pdfViewer.clientHeight - 16;
+                    const viewport = page.getViewport({ scale: 1 });
+                    
+                    const scaleX = viewerWidth / viewport.width;
+                    const scaleY = viewerHeight / viewport.height;
+                    scale = Math.min(scaleX, scaleY);
+                    scaledViewport = page.getViewport({ scale: scale });
+                }
 
                 const canvas = document.createElement('canvas');
                 const context = canvas.getContext('2d');
                 canvas.height = scaledViewport.height;
                 canvas.width = scaledViewport.width;
                 
-                // Style canvas for fullscreen viewing
-                canvas.style.maxWidth = '100%';
-                canvas.style.maxHeight = '100%';
-                canvas.style.objectFit = 'contain';
+                // Style canvas based on mode
+                if (isUltraFullscreen) {
+                    canvas.style.display = 'block';
+                    canvas.style.margin = '0 auto';
+                    canvas.style.width = scaledViewport.width + 'px';
+                    canvas.style.height = scaledViewport.height + 'px';
+                    canvas.style.minWidth = '100vw';
+                } else {
+                    canvas.style.maxWidth = '100%';
+                    canvas.style.maxHeight = '100%';
+                    canvas.style.objectFit = 'contain';
+                    canvas.style.borderRadius = '4px';
+                }
+                
                 canvas.style.boxShadow = '0 8px 32px rgba(255,255,255,0.1)';
-                canvas.style.borderRadius = '4px';
 
                 const renderContext = {
                     canvasContext: context,
@@ -1784,7 +1829,7 @@
                 pdfViewer.innerHTML = '';
                 pdfViewer.appendChild(canvas);
 
-                // Center the canvas in the viewer
+                // Reset scroll position
                 pdfViewer.scrollTop = 0;
                 pdfViewer.scrollLeft = 0;
             } catch (error) {
@@ -1830,6 +1875,27 @@
             }
         }
 
+        // Toggle ultra fullscreen mode
+        function toggleUltraFullscreen() {
+            const modal = document.getElementById('pdfModal');
+            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            
+            if (isUltraFullscreen) {
+                // Exit ultra fullscreen
+                modal.classList.remove('ultra-fullscreen');
+            } else {
+                // Enter ultra fullscreen
+                modal.classList.add('ultra-fullscreen');
+            }
+            
+            // Re-render current page to adjust canvas size
+            if (currentPDFDoc && currentPageNum) {
+                setTimeout(() => {
+                    renderPDFPage(currentPageNum);
+                }, 100);
+            }
+        }
+
         // Close PDF modal and exit fullscreen
         function closePDFModal() {
             const modal = document.getElementById('pdfModal');
@@ -1851,6 +1917,7 @@
             
             modal.style.display = 'none';
             modal.classList.remove('fullscreen');
+            modal.classList.remove('ultra-fullscreen');
             currentPDFDoc = null;
             
             // Restore body scroll
@@ -1886,7 +1953,7 @@
             const diffY = touchStartY - touchEndY;
             const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-            // Quick tap detection for tap zones (left/right side navigation)
+            // Quick tap detection
             if (distance < 10 && touchDuration < 300) {
                 const viewerWidth = e.currentTarget.clientWidth;
                 const tapZoneWidth = viewerWidth * 0.25; // 25% of viewer width on each side
@@ -1899,17 +1966,24 @@
                     // Right side tap - next page
                     nextPage();
                     return;
+                } else {
+                    // Center tap - toggle ultra fullscreen
+                    toggleUltraFullscreen();
+                    return;
                 }
             }
 
-            // Improved horizontal swipe detection
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
-                if (diffX > 0) {
-                    // Swipe left - next page
-                    nextPage();
-                } else {
-                    // Swipe right - previous page
-                    previousPage();
+            // Improved horizontal swipe detection (only if not in ultra fullscreen)
+            const modal = document.getElementById('pdfModal');
+            if (!modal.classList.contains('ultra-fullscreen')) {
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
+                    if (diffX > 0) {
+                        // Swipe left - next page
+                        nextPage();
+                    } else {
+                        // Swipe right - previous page
+                        previousPage();
+                    }
                 }
             }
         }, { passive: true });
@@ -1922,15 +1996,31 @@
             }
         }
 
-        // Handle escape key to close modal
+        // Handle keyboard controls
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closePDFModal();
-            } else if (document.getElementById('pdfModal').style.display === 'block') {
-                if (event.key === 'ArrowLeft') {
-                    previousPage();
-                } else if (event.key === 'ArrowRight') {
-                    nextPage();
+            const modal = document.getElementById('pdfModal');
+            if (modal.style.display === 'block') {
+                const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+                
+                if (event.key === 'Escape') {
+                    if (isUltraFullscreen) {
+                        // First ESC: exit ultra fullscreen
+                        toggleUltraFullscreen();
+                    } else {
+                        // Second ESC: close modal
+                        closePDFModal();
+                    }
+                } else if (event.key === 'Enter' || event.key === ' ') {
+                    // Enter or Space: toggle ultra fullscreen
+                    event.preventDefault();
+                    toggleUltraFullscreen();
+                } else if (!isUltraFullscreen) {
+                    // Arrow keys only work in normal mode (not ultra fullscreen)
+                    if (event.key === 'ArrowLeft') {
+                        previousPage();
+                    } else if (event.key === 'ArrowRight') {
+                        nextPage();
+                    }
                 }
             }
         });
