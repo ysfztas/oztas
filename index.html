@@ -751,7 +751,7 @@
             display: none;
         }
 
-        /* Mobile: Hide controls since we show all pages */
+        /* Mobile: Direct fullscreen mode */
         @media (max-width: 768px) {
             .pdf-controls {
                 display: none;
@@ -775,6 +775,27 @@
                 font-size: 2rem;
                 text-align: center;
             }
+            
+            /* Auto ultra-fullscreen on mobile */
+            .pdf-modal {
+                background: #000;
+            }
+            
+            .pdf-modal-header {
+                display: none;
+            }
+            
+            .pdf-modal-content {
+                background: #000;
+            }
+            
+            .pdf-viewer {
+                height: 100vh !important;
+                padding: 0 !important;
+                display: block !important;
+                align-items: flex-start !important;
+                justify-content: flex-start !important;
+            }
         }
 
         .pdf-modal.ultra-fullscreen .pdf-viewer {
@@ -785,6 +806,14 @@
             align-items: flex-start;
             justify-content: flex-start;
             touch-action: pan-x pan-y pinch-zoom;
+        }
+
+        /* Mobile-specific touch optimizations */
+        @media (max-width: 768px) {
+            .pdf-viewer {
+                touch-action: pan-x pan-y pinch-zoom;
+                -webkit-overflow-scrolling: touch;
+            }
         }
 
         .pdf-modal.ultra-fullscreen .pdf-viewer canvas {
@@ -1630,8 +1659,12 @@
             const displayName = formatPDFName(filename);
             const cardId = filename.replace(/[^a-zA-Z0-9]/g, '');
 
+            // Different behavior for mobile and desktop
+            const isMobile = isMobileDevice();
+            const openFunction = isMobile ? 'openMobileDirectPDF' : 'openPDFModal';
+            
             const cardHtml = `
-                <div class="pdf-card" onclick="openPDFModal('${pdfPath}', '${displayName}')">
+                <div class="pdf-card" onclick="${openFunction}('${pdfPath}', '${displayName}')">
                     <div class="pdf-preview" id="preview-${cardId}">
                         <div class="pdf-preview-placeholder">
                             <i class="fas fa-file-pdf"></i>
@@ -1644,7 +1677,7 @@
                             <span class="pdf-size" id="size-${cardId}">...</span>
                         </div>
                         <div class="pdf-actions">
-                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); openPDFModal('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle" style="width: 100%;">
+                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); ${openFunction}('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle" style="width: 100%;">
                                  <i class="fas fa-eye"></i> Görüntüle
                              </button>
                         </div>
@@ -1768,7 +1801,66 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Open PDF in fullscreen modal - Mobile Optimized
+        // Open PDF directly in ultra fullscreen for mobile
+        async function openMobileDirectPDF(pdfPath, title) {
+            const modal = document.getElementById('pdfModal');
+            const pdfViewer = document.getElementById('pdfViewer');
+
+            pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
+            modal.style.display = 'block';
+            modal.classList.add('fullscreen');
+            modal.classList.add('ultra-fullscreen'); // Start in ultra-fullscreen for mobile
+            
+            // Reset zoom state
+            resetZoomPan();
+            
+            // Prevent body scroll
+            document.body.style.overflow = 'hidden';
+
+            // Request fullscreen mode
+            try {
+                if (modal.requestFullscreen) {
+                    await modal.requestFullscreen();
+                } else if (modal.webkitRequestFullscreen) {
+                    await modal.webkitRequestFullscreen();
+                } else if (modal.mozRequestFullScreen) {
+                    await modal.mozRequestFullScreen();
+                } else if (modal.msRequestFullscreen) {
+                    await modal.msRequestFullscreen();
+                }
+            } catch (error) {
+                console.log('Fullscreen request failed:', error);
+            }
+
+            // Force landscape orientation on mobile devices
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (error) {
+                console.log('Screen orientation lock not supported or failed');
+            }
+
+            try {
+                const loadingTask = pdfjsLib.getDocument(pdfPath);
+                currentPDFDoc = await loadingTask.promise;
+                totalPages = currentPDFDoc.numPages;
+                currentPageNum = 1;
+
+                await renderPDFPage(currentPageNum);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                pdfViewer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: white;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">PDF Yüklenemedi</h3>
+                        <p style="font-size: 0.9rem;">Dosya bulunamadı veya bozuk olabilir.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Open PDF in fullscreen modal - Desktop Optimized
         async function openPDFModal(pdfPath, title) {
             const modal = document.getElementById('pdfModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -2087,13 +2179,20 @@
         function toggleUltraFullscreen() {
             const modal = document.getElementById('pdfModal');
             const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            const isMobile = isMobileDevice();
+            
+            if (isMobile) {
+                // Mobile: Always stay in ultra fullscreen, just close on toggle
+                closePDFModal();
+                return;
+            }
             
             if (isUltraFullscreen) {
-                // Exit ultra fullscreen
+                // Exit ultra fullscreen (desktop only)
                 modal.classList.remove('ultra-fullscreen');
                 resetZoomPan();
             } else {
-                // Enter ultra fullscreen
+                // Enter ultra fullscreen (desktop only)
                 modal.classList.add('ultra-fullscreen');
                 resetZoomPan();
             }
@@ -2260,7 +2359,7 @@
             
             // Different behavior for mobile and desktop
             if (isMobile) {
-                // Mobile: Only center tap for ultra fullscreen toggle, double tap for zoom reset
+                // Mobile: Single tap to close, double tap for zoom reset
                 if (e.changedTouches.length > 0) {
                     const touchEndX = e.changedTouches[0].clientX;
                     const touchEndY = e.changedTouches[0].clientY;
@@ -2276,14 +2375,18 @@
                         const isDoubleTap = currentTime - lastTapTime < 300;
                         lastTapTime = currentTime;
                         
-                        if (isUltraFullscreen && isDoubleTap && currentScale > 1) {
-                            // Double tap in ultra fullscreen - reset zoom
+                        if (isDoubleTap && currentScale > 1) {
+                            // Double tap - reset zoom
                             resetZoomPan();
                             applyCanvasTransform();
                             return;
-                        } else {
-                            // Single tap - toggle ultra fullscreen
-                            toggleUltraFullscreen();
+                        } else if (!isDoubleTap) {
+                            // Single tap - close PDF (mobile always starts in ultra fullscreen)
+                            setTimeout(() => {
+                                if (currentTime === lastTapTime) { // Make sure it wasn't a double tap
+                                    closePDFModal();
+                                }
+                            }, 300);
                             return;
                         }
                     }
