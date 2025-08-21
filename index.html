@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Öztas Mobilya - Modern Mobilya Çözümleri</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
@@ -19,6 +19,7 @@
             line-height: 1.6;
             color: #333;
             background-color: #fff;
+            overflow-x: hidden;
         }
 
         .container {
@@ -27,16 +28,25 @@
             padding: 0 20px;
         }
 
-        /* Header */
+        /* Mobile-First Header */
         header {
-            background: linear-gradient(135deg, #2c3e50 0%, #3498db 100%);
-            color: white;
+            background: rgba(255, 255, 255, 0.95);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            color: #2c3e50;
             padding: 1rem 0;
             position: fixed;
             top: 0;
             width: 100%;
             z-index: 1000;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+            box-shadow: 0 8px 50px rgba(0,0,0,0.15);
         }
 
         nav {
@@ -46,89 +56,203 @@
         }
 
         .logo {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
-            background: linear-gradient(45deg, #fff, #ecf0f1);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            transition: all 0.3s ease;
         }
 
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        /* Mobile Navigation */
         .nav-links {
-            display: flex;
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: rgba(255, 255, 255, 0.98);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            flex-direction: column;
+            padding: 1.5rem;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
             list-style: none;
-            gap: 2rem;
+            gap: 0.5rem;
+        }
+
+        .nav-links.active {
+            display: flex;
         }
 
         .nav-links a {
-            color: white;
+            color: #2c3e50;
             text-decoration: none;
             transition: all 0.3s ease;
-            padding: 0.5rem 1rem;
-            border-radius: 5px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            position: relative;
+            overflow: hidden;
+            text-align: center;
+            display: block;
+        }
+
+        .nav-links a::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            transition: left 0.3s ease;
+            z-index: -1;
+            border-radius: 25px;
+        }
+
+        .nav-links a:hover::before {
+            left: 0;
         }
 
         .nav-links a:hover {
-            background: rgba(255,255,255,0.1);
+            color: white;
             transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
-        /* Hero Section */
+        .mobile-menu-btn {
+            display: block;
+            background: none;
+            border: none;
+            color: #2c3e50;
+            font-size: 1.8rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .mobile-menu-btn:hover {
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        /* Hero Section - Mobile Optimized */
         .hero {
-            background: linear-gradient(rgba(44, 62, 80, 0.8), rgba(52, 152, 219, 0.8)), 
-                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600" fill="%23f8f9fa"><rect width="1200" height="600" fill="%23ecf0f1"/><polygon points="0,600 1200,400 1200,600" fill="%23bdc3c7"/><circle cx="300" cy="200" r="50" fill="%2395a5a6" opacity="0.5"/><circle cx="900" cy="150" r="30" fill="%2395a5a6" opacity="0.3"/><rect x="100" y="300" width="200" height="100" rx="10" fill="%2395a5a6" opacity="0.4"/><rect x="800" y="250" width="150" height="120" rx="8" fill="%2395a5a6" opacity="0.4"/></svg>');
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%), 
+                        url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><defs><radialGradient id="grad1" cx="50%" cy="50%" r="50%"><stop offset="0%" style="stop-color:%23667eea;stop-opacity:0.8" /><stop offset="100%" style="stop-color:%23764ba2;stop-opacity:0.4" /></radialGradient></defs><rect width="1200" height="600" fill="url(%23grad1)"/><circle cx="200" cy="150" r="120" fill="%23667eea" opacity="0.2"/><circle cx="1000" cy="400" r="80" fill="%23764ba2" opacity="0.3"/><path d="M0,300 Q300,200 600,300 T1200,300 L1200,600 L0,600 Z" fill="%23667eea" opacity="0.2"/></svg>');
             background-size: cover;
             background-position: center;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             text-align: center;
             color: white;
+            position: relative;
+            overflow: hidden;
+            padding: 80px 0 40px;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="white" opacity="0.1"><animate attributeName="opacity" values="0.1;0.3;0.1" dur="3s" repeatCount="indefinite"/></circle><circle cx="80" cy="30" r="1" fill="white" opacity="0.2"><animate attributeName="opacity" values="0.2;0.5;0.2" dur="4s" repeatCount="indefinite"/></circle><circle cx="40" cy="70" r="1.5" fill="white" opacity="0.15"><animate attributeName="opacity" values="0.15;0.4;0.15" dur="5s" repeatCount="indefinite"/></circle></svg>');
+            animation: floatAnimation 20s ease-in-out infinite;
+        }
+
+        @keyframes floatAnimation {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            33% { transform: translateY(-20px) rotate(1deg); }
+            66% { transform: translateY(-10px) rotate(-1deg); }
         }
 
         .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: none;
+            letter-spacing: -0.02em;
+            line-height: 1.1;
         }
 
         .hero-content p {
-            font-size: 1.3rem;
-            margin-bottom: 2rem;
-            max-width: 600px;
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+            max-width: 90%;
             margin-left: auto;
             margin-right: auto;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+            opacity: 0.95;
+            font-weight: 400;
+            line-height: 1.6;
         }
 
         .cta-button {
             display: inline-block;
-            background: linear-gradient(45deg, #e74c3c, #f39c12);
+            background: rgba(255, 255, 255, 0.2);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
             color: white;
-            padding: 15px 30px;
+            padding: 15px 35px;
             text-decoration: none;
-            border-radius: 30px;
+            border-radius: 50px;
             font-weight: 600;
-            transition: all 0.3s ease;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            text-transform: capitalize;
+            letter-spacing: 0.5px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+            overflow: hidden;
+            font-size: 0.95rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .cta-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(231, 76, 60, 0.4);
+        .cta-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%);
+            transition: left 0.4s ease;
         }
 
-        /* Sections */
+        .cta-button:hover::before,
+        .cta-button:active::before {
+            left: 0;
+        }
+
+        .cta-button:hover,
+        .cta-button:active {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        /* Sections - Mobile Optimized */
         .section {
-            padding: 80px 0;
+            padding: 60px 0;
         }
 
         .section-title {
             text-align: center;
-            font-size: 2.8rem;
-            margin-bottom: 3rem;
+            font-size: 2.2rem;
+            margin-bottom: 2.5rem;
             font-weight: 700;
             color: #2c3e50;
             position: relative;
@@ -149,46 +273,75 @@
 
         .section-subtitle {
             text-align: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             color: #7f8c8d;
-            margin-bottom: 4rem;
-            max-width: 600px;
+            margin-bottom: 3rem;
+            max-width: 90%;
             margin-left: auto;
             margin-right: auto;
+            line-height: 1.6;
         }
 
-        /* Products Grid */
+        /* Mobile-First Products Grid */
         .products-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 3rem;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
         }
 
         .product-card {
-            background: white;
-            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            border: 1px solid #ecf0f1;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
         }
 
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .product-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(118, 75, 162, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .product-card:hover::before,
+        .product-card:active::before {
+            opacity: 1;
+        }
+
+        .product-card:hover,
+        .product-card:active {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.3);
         }
 
         .product-image {
-            height: 200px;
-            background: linear-gradient(45deg, #3498db, #2980b9);
+            height: 180px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 4rem;
+            font-size: 3.5rem;
             color: white;
             position: relative;
             overflow: hidden;
+            transition: all 0.4s ease;
+        }
+
+        .product-card:hover .product-image,
+        .product-card:active .product-image {
+            transform: scale(1.05);
         }
 
         .product-image::before {
@@ -198,17 +351,17 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"><rect width="300" height="200" fill="%233498db"/><rect x="50" y="80" width="200" height="40" rx="5" fill="%232980b9" opacity="0.8"/><rect x="70" y="100" width="160" height="20" rx="3" fill="%21618ce" opacity="0.6"/><circle cx="250" cy="50" r="20" fill="%232980b9" opacity="0.5"/></svg>');
-            opacity: 0.3;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 180"><defs><radialGradient id="cardGrad" cx="50%" cy="50%" r="60%"><stop offset="0%" style="stop-color:%23667eea;stop-opacity:0.3" /><stop offset="100%" style="stop-color:%23764ba2;stop-opacity:0.1" /></radialGradient></defs><rect width="300" height="180" fill="url(%23cardGrad)"/><circle cx="70" cy="50" r="20" fill="white" opacity="0.1"/><circle cx="230" cy="130" r="25" fill="white" opacity="0.08"/><rect x="50" y="90" width="200" height="3" rx="2" fill="white" opacity="0.15"/></svg>');
+            opacity: 0.8;
         }
 
         .product-content {
-            padding: 2rem;
+            padding: 1.5rem;
         }
 
         .product-content h3 {
-            font-size: 1.6rem;
-            margin-bottom: 1rem;
+            font-size: 1.4rem;
+            margin-bottom: 0.8rem;
             color: #2c3e50;
             font-weight: 700;
             letter-spacing: -0.01em;
@@ -218,23 +371,37 @@
         .product-content p {
             color: #7f8c8d;
             line-height: 1.6;
+            font-size: 0.95rem;
         }
 
-        /* About Section */
+        /* About Section - Mobile Optimized */
         .about {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(233, 236, 239, 0.9) 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><circle cx="100" cy="100" r="60" fill="%23667eea" opacity="0.05"/><circle cx="1100" cy="500" r="80" fill="%23764ba2" opacity="0.05"/><path d="M0,400 Q600,300 1200,400 L1200,600 L0,600 Z" fill="%23667eea" opacity="0.03"/></svg>');
+            animation: floatAnimation 25s ease-in-out infinite;
         }
 
         .about-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
             align-items: center;
         }
 
         .about-text h3 {
-            font-size: 2.2rem;
-            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.2rem;
             color: #2c3e50;
             font-weight: 700;
             letter-spacing: -0.01em;
@@ -243,48 +410,52 @@
 
         .about-text p {
             color: #5d6d7e;
-            margin-bottom: 1.5rem;
-            font-size: 1.1rem;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+            line-height: 1.6;
         }
 
         .about-features {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.5rem;
+            grid-template-columns: 1fr;
+            gap: 1rem;
         }
 
         .feature-item {
             display: flex;
             align-items: center;
             gap: 1rem;
+            padding: 0.5rem 0;
         }
 
         .feature-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(45deg, #3498db, #2980b9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
         }
 
         .feature-text {
             font-weight: 500;
             color: #2c3e50;
+            font-size: 0.95rem;
         }
 
         .about-image {
-            height: 400px;
+            height: 250px;
             background: linear-gradient(45deg, #34495e, #2c3e50);
             border-radius: 15px;
             display: flex;
             align-items: center;
             justify-content: center;
             color: white;
-            font-size: 5rem;
+            font-size: 4rem;
             position: relative;
             overflow: hidden;
         }
@@ -296,25 +467,37 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300"><rect width="400" height="300" fill="%2334495e"/><rect x="50" y="50" width="120" height="80" rx="10" fill="%232c3e50" opacity="0.8"/><rect x="200" y="70" width="150" height="100" rx="8" fill="%232c3e50" opacity="0.6"/><rect x="80" y="180" width="240" height="60" rx="5" fill="%232c3e50" opacity="0.4"/><circle cx="320" cy="80" r="25" fill="%232c3e50" opacity="0.5"/></svg>');
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 250"><rect width="400" height="250" fill="%2334495e"/><rect x="50" y="40" width="100" height="70" rx="8" fill="%232c3e50" opacity="0.8"/><rect x="200" y="60" width="120" height="80" rx="6" fill="%232c3e50" opacity="0.6"/><rect x="80" y="150" width="200" height="50" rx="4" fill="%232c3e50" opacity="0.4"/><circle cx="320" cy="70" r="20" fill="%232c3e50" opacity="0.5"/></svg>');
             opacity: 0.3;
         }
 
-        /* Contact Section */
+        /* Contact Section - Mobile Optimized */
         .contact {
-            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.95) 0%, rgba(118, 75, 162, 0.95) 100%);
             color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><circle cx="200" cy="100" r="80" fill="white" opacity="0.03"/><circle cx="1000" cy="500" r="100" fill="white" opacity="0.05"/><rect x="800" y="200" width="300" height="2" fill="white" opacity="0.08"/><rect x="100" y="400" width="200" height="1" fill="white" opacity="0.06"/></svg>');
         }
 
         .contact-content {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            grid-template-columns: 1fr;
+            gap: 2.5rem;
         }
 
         .contact-info h3 {
-            font-size: 2rem;
-            margin-bottom: 2rem;
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
             font-weight: 600;
         }
 
@@ -322,36 +505,38 @@
             display: flex;
             align-items: center;
             gap: 1rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .contact-icon {
-            width: 50px;
-            height: 50px;
+            width: 45px;
+            height: 45px;
             background: linear-gradient(45deg, #3498db, #2980b9);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
+            flex-shrink: 0;
         }
 
         .contact-form {
             background: rgba(255,255,255,0.1);
-            padding: 2rem;
+            padding: 1.5rem;
             border-radius: 15px;
             -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.2rem;
         }
 
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
             font-weight: 500;
+            font-size: 0.95rem;
         }
 
         .form-group input,
@@ -364,6 +549,8 @@
             color: white;
             -webkit-backdrop-filter: blur(5px);
             backdrop-filter: blur(5px);
+            font-size: 16px; /* Prevents zoom on iOS */
+            -webkit-tap-highlight-color: transparent;
         }
 
         .form-group input::placeholder,
@@ -374,18 +561,21 @@
         .submit-btn {
             background: linear-gradient(45deg, #e74c3c, #f39c12);
             color: white;
-            padding: 12px 30px;
+            padding: 15px 30px;
             border: none;
             border-radius: 25px;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s ease;
             width: 100%;
+            font-size: 1rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .submit-btn:hover {
+        .submit-btn:hover,
+        .submit-btn:active {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
         }
 
         /* Footer */
@@ -396,81 +586,53 @@
             padding: 2rem 0;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .nav-links {
-                flex-direction: column;
-                gap: 1rem;
-            }
-            
-            .hero-content h1 {
-                font-size: 2.5rem;
-            }
-            
-            .hero-content p {
-                font-size: 1.1rem;
-            }
-            
-            .about-content,
-            .contact-content {
-                grid-template-columns: 1fr;
-                gap: 2rem;
-            }
-            
-            .products-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .about-features {
-                grid-template-columns: 1fr;
-            }
+        footer p {
+            font-size: 0.9rem;
+            line-height: 1.6;
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.8s ease-out;
-        }
-
-        /* PDF Catalog Styles */
+        /* PDF Catalog Styles - Mobile Optimized */
         .catalogs {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(233, 236, 239, 0.9) 100%);
+            position: relative;
+        }
+
+        .catalogs::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect x="50" y="50" width="80" height="100" rx="6" fill="%23667eea" opacity="0.04"/><rect x="150" y="70" width="60" height="80" rx="4" fill="%23764ba2" opacity="0.04"/><rect x="1000" y="300" width="100" height="120" rx="8" fill="%23667eea" opacity="0.03"/></svg>');
         }
 
         .pdf-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1.5rem;
         }
 
         .pdf-card {
             background: white;
             border-radius: 15px;
             overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
             transition: all 0.3s ease;
             border: 1px solid #ecf0f1;
             cursor: pointer;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .pdf-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        .pdf-card:hover,
+        .pdf-card:active {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
         }
 
         .pdf-preview {
-            height: 300px;
+            height: 200px;
             background: linear-gradient(45deg, #34495e, #2c3e50);
             position: relative;
             overflow: hidden;
@@ -483,22 +645,22 @@
             max-width: 100%;
             max-height: 100%;
             border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
         }
 
         .pdf-preview-placeholder {
             color: white;
-            font-size: 3rem;
+            font-size: 2.5rem;
             text-align: center;
         }
 
         .pdf-info {
-            padding: 1.5rem;
+            padding: 1.2rem;
         }
 
         .pdf-info h3 {
-            font-size: 1.3rem;
-            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+            margin-bottom: 0.6rem;
             color: #2c3e50;
             font-weight: 600;
         }
@@ -508,16 +670,16 @@
             justify-content: space-between;
             align-items: center;
             margin-bottom: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             color: #7f8c8d;
         }
 
         .pdf-size {
             background: #3498db;
             color: white;
-            padding: 0.3rem 0.8rem;
-            border-radius: 15px;
-            font-size: 0.8rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
         }
 
         .pdf-actions {
@@ -527,7 +689,7 @@
 
         .pdf-btn {
             flex: 1;
-            padding: 0.8rem 1rem;
+            padding: 0.8rem 0.8rem;
             border: none;
             border-radius: 8px;
             cursor: pointer;
@@ -536,6 +698,8 @@
             text-decoration: none;
             display: inline-block;
             text-align: center;
+            font-size: 0.9rem;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .pdf-btn-view {
@@ -543,7 +707,8 @@
             color: white;
         }
 
-        .pdf-btn-view:hover {
+        .pdf-btn-view:hover,
+        .pdf-btn-view:active {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
@@ -553,12 +718,13 @@
             color: white;
         }
 
-        .pdf-btn-download:hover {
+        .pdf-btn-download:hover,
+        .pdf-btn-download:active {
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
         }
 
-        /* PDF Modal */
+        /* Mobile-Optimized PDF Modal */
         .pdf-modal {
             display: none;
             position: fixed;
@@ -566,19 +732,19 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.9);
+            background: rgba(0,0,0,0.95);
             z-index: 2000;
-            overflow: auto;
+                         overflow: auto;
         }
 
         .pdf-modal-content {
             position: relative;
-            margin: 2rem auto;
-            max-width: 90%;
-            max-height: 90%;
+            margin: 0;
+            width: 100%;
+            height: 100%;
             background: white;
-            border-radius: 10px;
-            overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
         .pdf-modal-header {
@@ -588,20 +754,29 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            flex-shrink: 0;
+            position: sticky;
+            top: 0;
+            z-index: 10;
         }
 
         .pdf-modal-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: 600;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex: 1;
+            margin-right: 1rem;
         }
 
         .pdf-close {
             background: none;
             border: none;
             color: white;
-            font-size: 2rem;
+            font-size: 1.8rem;
             cursor: pointer;
-            padding: 0;
+            padding: 0.5rem;
             width: 40px;
             height: 40px;
             display: flex;
@@ -609,46 +784,64 @@
             justify-content: center;
             border-radius: 50%;
             transition: background 0.3s ease;
+            flex-shrink: 0;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .pdf-close:hover {
+        .pdf-close:hover,
+        .pdf-close:active {
             background: rgba(255,255,255,0.2);
         }
 
         .pdf-viewer {
-            height: 70vh;
+            flex: 1;
             overflow: auto;
             text-align: center;
             padding: 1rem;
+                         background: #f8f9fa;
         }
 
         .pdf-viewer canvas {
             max-width: 100%;
             margin-bottom: 1rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+            border-radius: 8px;
+            background: white;
         }
 
         .pdf-controls {
-            background: #f8f9fa;
+            background: white;
             padding: 1rem;
             text-align: center;
             border-top: 1px solid #dee2e6;
+            flex-shrink: 0;
+            position: sticky;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .pdf-nav-btn {
             background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
-            margin: 0 0.5rem;
-            border-radius: 5px;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-weight: 500;
+            font-size: 0.9rem;
+            -webkit-tap-highlight-color: transparent;
+            min-width: 100px;
         }
 
-        .pdf-nav-btn:hover {
+        .pdf-nav-btn:hover,
+        .pdf-nav-btn:active {
             transform: translateY(-2px);
-            box-shadow: 0 3px 10px rgba(52, 152, 219, 0.4);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
         }
 
         .pdf-nav-btn:disabled {
@@ -659,9 +852,10 @@
         }
 
         .page-info {
-            margin: 0 1rem;
             font-weight: 500;
             color: #2c3e50;
+            font-size: 0.95rem;
+            white-space: nowrap;
         }
 
         /* Loading Animation */
@@ -680,33 +874,157 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Responsive Design for PDF Section */
-        @media (max-width: 768px) {
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* Tablet Responsive Design */
+        @media (min-width: 768px) {
+            .container {
+                padding: 0 30px;
+            }
+
+            .nav-links {
+                display: flex !important;
+                position: relative;
+                top: auto;
+                left: auto;
+                right: auto;
+                background: none;
+                flex-direction: row;
+                padding: 0;
+                border-radius: 0;
+                box-shadow: none;
+                gap: 1.5rem;
+            }
+
+            .mobile-menu-btn {
+                display: none;
+            }
+
+            .logo {
+                font-size: 2rem;
+            }
+
+            .hero-content h1 {
+                font-size: 3.2rem;
+            }
+
+            .hero-content p {
+                font-size: 1.3rem;
+                max-width: 70%;
+            }
+
+            .section-title {
+                font-size: 2.6rem;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .about-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+
+            .about-features {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1.2rem;
+            }
+
+            .contact-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 3rem;
+            }
+
             .pdf-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
             }
-            
+
             .pdf-modal-content {
-                margin: 1rem;
-                max-width: calc(100% - 2rem);
+                margin: 2rem;
+                width: calc(100% - 4rem);
+                height: calc(100% - 4rem);
+                border-radius: 15px;
+                overflow: hidden;
             }
-            
-            .pdf-viewer {
-                height: 60vh;
+
+            .pdf-controls {
+                position: static;
             }
-            
-            .pdf-actions {
-                flex-direction: column;
+        }
+
+        /* Desktop Responsive Design */
+        @media (min-width: 1024px) {
+            .hero-content h1 {
+                font-size: 3.8rem;
             }
-            
-            .page-info {
-                margin: 0.5rem 0;
+
+            .hero-content p {
+                font-size: 1.4rem;
+                max-width: 60%;
+            }
+
+            .section-title {
+                font-size: 2.8rem;
+            }
+
+            .products-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .pdf-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .about-image {
+                height: 350px;
             }
         }
 
         /* Scroll behavior */
         html {
             scroll-behavior: smooth;
+        }
+
+        /* Touch improvements */
+        @media (hover: none) and (pointer: coarse) {
+            .product-card:hover,
+            .pdf-card:hover,
+            .cta-button:hover,
+            .pdf-btn:hover,
+            .submit-btn:hover,
+            .pdf-nav-btn:hover {
+                transform: none;
+                box-shadow: initial;
+            }
+
+            .product-card:active,
+            .pdf-card:active {
+                transform: scale(0.98);
+            }
+
+            .cta-button:active,
+            .pdf-btn:active,
+            .submit-btn:active,
+            .pdf-nav-btn:active {
+                transform: scale(0.95);
+            }
         }
     </style>
 </head>
@@ -716,13 +1034,16 @@
             <div class="logo">
                 <i class="fas fa-couch"></i> Öztas Mobilya
             </div>
-            <ul class="nav-links">
+            <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Ana Sayfa</a></li>
                 <li><a href="#products">Ürünler</a></li>
                 <li><a href="#catalogs">Kataloglar</a></li>
                 <li><a href="#about">Hakkımızda</a></li>
                 <li><a href="#contact">İletişim</a></li>
             </ul>
+                         <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Menü">
+                 <i class="fas fa-bars" aria-hidden="true"></i>
+             </button>
         </nav>
     </header>
 
@@ -823,22 +1144,22 @@
         </div>
     </section>
 
-    <!-- PDF Modal -->
+    <!-- Mobile-Optimized PDF Modal -->
     <div id="pdfModal" class="pdf-modal">
         <div class="pdf-modal-content">
             <div class="pdf-modal-header">
                 <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
-                <button class="pdf-close" onclick="closePDFModal()">&times;</button>
+                <button class="pdf-close" onclick="closePDFModal()" aria-label="Kapat">&times;</button>
             </div>
             <div class="pdf-viewer" id="pdfViewer">
                 <!-- PDF içeriği burada gösterilecek -->
             </div>
             <div class="pdf-controls">
-                <button class="pdf-nav-btn" id="prevPage" onclick="previousPage()">◀ Önceki</button>
+                <button class="pdf-nav-btn" id="prevPage" onclick="previousPage()" aria-label="Önceki Sayfa">◀ Önceki</button>
                 <span class="page-info">
-                    Sayfa <span id="currentPage">1</span> / <span id="totalPages">1</span>
+                    <span id="currentPage">1</span> / <span id="totalPages">1</span>
                 </span>
-                <button class="pdf-nav-btn" id="nextPage" onclick="nextPage()">Sonraki ▶</button>
+                <button class="pdf-nav-btn" id="nextPage" onclick="nextPage()" aria-label="Sonraki Sayfa">Sonraki ▶</button>
             </div>
         </div>
     </div>
@@ -848,16 +1169,16 @@
             <h2 class="section-title">Hakkımızda</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <h3>25 Yıllık Deneyim</h3>
-                    <p>Öztas Mobilya olarak 25 yıldır kaliteli mobilya üretimi ve satışında hizmet vermekteyiz. Modern tasarım anlayışımız ve müşteri memnuniyeti odaklı yaklaşımımızla sektörde öncü konumdayız.</p>
-                    <p>Uzman kadromuz ve son teknoloji üretim tesislerimizle, her bütçeye uygun, kaliteli ve dayanıklı mobilyalar üretmekteyiz.</p>
+                    <h3>ÖZTAS MOBİLYA</h3>
+                    
+            
                     
                     <div class="about-features">
                         <div class="feature-item">
                             <div class="feature-icon">
                                 <i class="fas fa-award"></i>
                             </div>
-                            <div class="feature-text">Kaliteli Üretim</div>
+                            <div class="feature-text">Kaliteli</div>
                         </div>
                         <div class="feature-item">
                             <div class="feature-icon">
@@ -898,9 +1219,9 @@
                             <i class="fas fa-map-marker-alt"></i>
                         </div>
                         <div>
-                            <strong>Adres:</strong><br>
-                            Merkez Mah. Mobilya Cad. No:123<br>
-                            İstanbul, Türkiye
+                            <strong>Adres:</strong>
+                            Erzurum Cad, Cumhuriyet, Sefer Çk. No:1, 25400 Oltu/Erzurum
+                            
                         </div>
                     </div>
 
@@ -910,7 +1231,7 @@
                         </div>
                         <div>
                             <strong>Telefon:</strong><br>
-                            +90 212 555 01 23
+                            +90 04428163005
                         </div>
                     </div>
 
@@ -918,88 +1239,167 @@
                         <div class="contact-icon">
                             <i class="fas fa-envelope"></i>
                         </div>
-                        <div>
-                            <strong>E-mail:</strong><br>
-                            info@oztasmobilya.com
-                        </div>
+                                                 <div>
+                             <strong>E-mail:</strong><br>
+                             info@oztasmobilya.com
+                         </div>
                     </div>
 
                     <div class="contact-item">
                         <div class="contact-icon">
                             <i class="fas fa-clock"></i>
                         </div>
-                        <div>
-                            <strong>Çalışma Saatleri:</strong><br>
-                            Pzt-Cum: 09:00 - 18:00<br>
-                            Cumartesi: 10:00 - 17:00
-                        </div>
+                                                 <div>
+                             <strong>Çalışma Saatleri:</strong><br>
+                             Pzt-Cumartesi: 09:00 - 18:00<br>
+                             
+                         </div>
                     </div>
                 </div>
 
                 <div class="contact-form">
-                    <form>
-                        <div class="form-group">
-                            <label for="name">Adınız Soyadınız</label>
-                            <input type="text" id="name" name="name" placeholder="Adınızı girin" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="email">E-mail</label>
-                            <input type="email" id="email" name="email" placeholder="E-mail adresinizi girin" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="phone">Telefon</label>
-                            <input type="tel" id="phone" name="phone" placeholder="Telefon numaranızı girin">
-                        </div>
-                        <div class="form-group">
-                            <label for="message">Mesajınız</label>
-                            <textarea id="message" name="message" rows="5" placeholder="Mesajınızı yazın" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-btn">Mesaj Gönder</button>
-                    </form>
-                </div>
+                     <form id="contactForm">
+                         <div class="form-group">
+                             <label for="name">Adınız Soyadınız</label>
+                             <input type="text" id="name" name="name" placeholder="Adınızı girin" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="email">E-mail</label>
+                             <input type="email" id="email" name="email" placeholder="E-mail adresinizi girin" required>
+                         </div>
+                         <div class="form-group">
+                             <label for="phone">Telefon</label>
+                             <input type="tel" id="phone" name="phone" placeholder="Telefon numaranızı girin">
+                         </div>
+                         <div class="form-group">
+                             <label for="message">Mesajınız</label>
+                             <textarea id="message" name="message" rows="5" placeholder="Mesajınızı yazın" required></textarea>
+                         </div>
+                         <button type="submit" class="submit-btn">Mesaj Gönder</button>
+                     </form>
+                 </div>
             </div>
         </div>
     </section>
 
     <footer>
         <div class="container">
-            <p>&copy; 2024 Öztas Mobilya. Tüm hakları saklıdır. | Modern mobilya çözümleri için güvenilir adres.</p>
+            <p>&copy; 2024 Öztas Mobilya. Tüm hakları saklıdır.<br>Modern mobilya çözümleri için güvenilir adres.</p>
         </div>
     </footer>
 
     <script>
+        // Header scroll effect
+        const header = document.querySelector('header');
+        let scrollTimeout;
+        
+        window.addEventListener('scroll', () => {
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            }, 10);
+        }, { passive: true });
+
+        // Mobile menu toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const navLinks = document.getElementById('navLinks');
+        const menuIcon = mobileMenuBtn.querySelector('i');
+
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+            navLinks.classList.toggle('active');
+            
+            // Animate menu icon
+            if (navLinks.classList.contains('active')) {
+                menuIcon.classList.remove('fa-bars');
+                menuIcon.classList.add('fa-times');
+            } else {
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        });
+
+        // Close mobile menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navLinks.contains(e.target) && !mobileMenuBtn.contains(e.target)) {
+                navLinks.classList.remove('active');
+                menuIcon.classList.remove('fa-times');
+                menuIcon.classList.add('fa-bars');
+            }
+        });
+
         // Smooth scrolling for navigation links
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                const targetElement = document.querySelector(this.getAttribute('href'));
+                if (targetElement) {
+                    const headerHeight = header.offsetHeight;
+                    const targetPosition = targetElement.offsetTop - headerHeight;
+                    
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
             });
         });
 
-        // Form submission
-        document.querySelector('.contact-form form').addEventListener('submit', function(e) {
+                 // Form submission
+         const contactForm = document.getElementById('contactForm');
+         if (contactForm) {
+             contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            alert('Mesajınız alınmıştır! En kısa sürede size dönüş yapacağız.');
-            this.reset();
-        });
+            
+            // Simple form validation
+            const formData = new FormData(this);
+            const name = formData.get('name');
+            const email = formData.get('email');
+            const message = formData.get('message');
+            
+            if (!name || !email || !message) {
+                alert('Lütfen tüm zorunlu alanları doldurun.');
+                return;
+            }
+                         
+             alert('Mesajınız alınmıştır! En kısa sürede size dönüş yapacağız.');
+             this.reset();
+         });
+         }
 
-        // Enhanced animation on scroll
+        // Enhanced animation on scroll with throttling
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
         };
 
+        let animationTimeout;
         const observer = new IntersectionObserver(function(entries) {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    setTimeout(() => {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0) scale(1)';
-                    }, index * 100);
-                }
-            });
+            clearTimeout(animationTimeout);
+            animationTimeout = setTimeout(() => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting && !entry.target.classList.contains('animated')) {
+                        setTimeout(() => {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0) scale(1)';
+                            entry.target.classList.add('animated');
+                        }, index * 100);
+                    }
+                });
+            }, 50);
         }, observerOptions);
 
         // Observe multiple elements for staggered animations
@@ -1014,16 +1414,6 @@
             element.style.transform = 'translateY(30px) scale(0.95)';
             element.style.transition = 'all 0.6s cubic-bezier(0.23, 1, 0.32, 1)';
             observer.observe(element);
-        });
-
-        // Add parallax effect to hero section
-        window.addEventListener('scroll', () => {
-            const scrolled = window.pageYOffset;
-            const rate = scrolled * -0.5;
-            const hero = document.querySelector('.hero::before');
-            if (hero) {
-                document.querySelector('.hero').style.transform = `translateY(${rate}px)`;
-            }
         });
 
         // PDF Management System
@@ -1051,36 +1441,57 @@
             const pdfGrid = document.getElementById('pdf-grid');
             pdfFiles = [];
 
-            // Try to detect available PDF files
-            const availablePDFs = await detectPDFFiles();
-            
-            if (availablePDFs.length === 0) {
-                // Show empty state message
-                pdfGrid.innerHTML = `
-                    <div class="pdf-card" style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
-                        <div class="pdf-preview">
-                            <div class="pdf-preview-placeholder">
-                                <i class="fas fa-file-pdf" style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.7;"></i>
-                                <h3 style="color: white; margin-bottom: 1rem;">Henüz katalog yüklenmemiş</h3>
-                                <p style="color: rgba(255,255,255,0.8); font-size: 1rem;">PDF dosyalarınızı 'pdfs' klasörüne koyun</p>
-                            </div>
-                        </div>
-                        <div class="pdf-info">
-                            <h3>Kataloglar</h3>
-                            <p></p>
+            try {
+                const availablePDFs = await detectPDFFiles();
+                
+                if (availablePDFs.length === 0) {
+                    showEmptyState(pdfGrid);
+                    return;
+                }
+
+                // Clear loading state
+                pdfGrid.innerHTML = '';
+
+                // Create PDF cards
+                for (const pdfFile of availablePDFs) {
+                    await createPDFCard(pdfFile, pdfGrid);
+                }
+            } catch (error) {
+                console.error('Error loading catalog:', error);
+                showErrorState(pdfGrid);
+            }
+        }
+
+        function showEmptyState(container) {
+            container.innerHTML = `
+                <div class="pdf-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                    <div class="pdf-preview">
+                        <div class="pdf-preview-placeholder">
+                            <i class="fas fa-file-pdf" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.7;"></i>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Henüz katalog yüklenmemiş</h3>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">PDF dosyalarınızı 'pdfs' klasörüne koyun</p>
                         </div>
                     </div>
-                `;
-                return;
-            }
+                    <div class="pdf-info">
+                        <h3>Katalog Yükleme Rehberi</h3>
+                        <p style="font-size: 0.9rem;">PDF kataloglarınızı göstermek için dosyalarınızı <strong>/pdfs/</strong> klasörüne koyun.</p>
+                    </div>
+                </div>
+            `;
+        }
 
-            // Clear loading state
-            pdfGrid.innerHTML = '';
-
-            // Create PDF cards
-            for (const pdfFile of availablePDFs) {
-                await createPDFCard(pdfFile, pdfGrid);
-            }
+        function showErrorState(container) {
+            container.innerHTML = `
+                <div class="pdf-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                    <div class="pdf-preview">
+                        <div class="pdf-preview-placeholder">
+                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #e74c3c;"></i>
+                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Kataloglar yüklenemiyor</h3>
+                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Lütfen daha sonra tekrar deneyin</p>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
 
         // Detect available PDF files
@@ -1105,10 +1516,11 @@
         async function createPDFCard(filename, container) {
             const pdfPath = `pdfs/${filename}`;
             const displayName = formatPDFName(filename);
+            const cardId = filename.replace(/[^a-zA-Z0-9]/g, '');
 
             const cardHtml = `
                 <div class="pdf-card" onclick="openPDFModal('${pdfPath}', '${displayName}')">
-                    <div class="pdf-preview" id="preview-${filename.replace(/[^a-zA-Z0-9]/g, '')}">
+                    <div class="pdf-preview" id="preview-${cardId}">
                         <div class="pdf-preview-placeholder">
                             <i class="fas fa-file-pdf"></i>
                         </div>
@@ -1117,12 +1529,12 @@
                         <h3>${displayName}</h3>
                         <div class="pdf-meta">
                             <span><i class="far fa-file-alt"></i> PDF Katalog</span>
-                            <span class="pdf-size" id="size-${filename.replace(/[^a-zA-Z0-9]/g, '')}">...</span>
+                            <span class="pdf-size" id="size-${cardId}">...</span>
                         </div>
                         <div class="pdf-actions">
-                            <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); openPDFModal('${pdfPath}', '${displayName}')">
-                                <i class="fas fa-eye"></i> Görüntüle
-                            </button>
+                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); openPDFModal('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle">
+                                 <i class="fas fa-eye"></i> Görüntüle
+                             </button>
                             <a href="${pdfPath}" download class="pdf-btn pdf-btn-download" onclick="event.stopPropagation();">
                                 <i class="fas fa-download"></i> İndir
                             </a>
@@ -1135,21 +1547,21 @@
 
             // Generate preview and get file size
             try {
-                await generatePDFPreview(pdfPath, filename);
-                await getFileSize(pdfPath, filename);
+                await generatePDFPreview(pdfPath, cardId);
+                await getFileSize(pdfPath, cardId);
             } catch (error) {
                 console.error('Error processing PDF:', error);
             }
         }
 
         // Generate PDF preview thumbnail
-        async function generatePDFPreview(pdfPath, filename) {
+        async function generatePDFPreview(pdfPath, cardId) {
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfPath);
                 const pdf = await loadingTask.promise;
                 const page = await pdf.getPage(1);
 
-                const scale = 0.5;
+                const scale = window.innerWidth < 768 ? 0.4 : 0.5;
                 const viewport = page.getViewport({ scale: scale });
 
                 const canvas = document.createElement('canvas');
@@ -1164,14 +1576,14 @@
 
                 await page.render(renderContext).promise;
 
-                const previewContainer = document.getElementById(`preview-${filename.replace(/[^a-zA-Z0-9]/g, '')}`);
+                const previewContainer = document.getElementById(`preview-${cardId}`);
                 if (previewContainer) {
                     previewContainer.innerHTML = '';
                     previewContainer.appendChild(canvas);
                 }
             } catch (error) {
                 console.error('Error generating preview:', error);
-                const previewContainer = document.getElementById(`preview-${filename.replace(/[^a-zA-Z0-9]/g, '')}`);
+                const previewContainer = document.getElementById(`preview-${cardId}`);
                 if (previewContainer) {
                     previewContainer.innerHTML = `
                         <div class="pdf-preview-placeholder">
@@ -1183,20 +1595,24 @@
         }
 
         // Get file size
-        async function getFileSize(pdfPath, filename) {
+        async function getFileSize(pdfPath, cardId) {
             try {
                 const response = await fetch(pdfPath, { method: 'HEAD' });
                 const contentLength = response.headers.get('content-length');
                 if (contentLength) {
                     const sizeInBytes = parseInt(contentLength);
                     const sizeFormatted = formatFileSize(sizeInBytes);
-                    const sizeElement = document.getElementById(`size-${filename.replace(/[^a-zA-Z0-9]/g, '')}`);
+                    const sizeElement = document.getElementById(`size-${cardId}`);
                     if (sizeElement) {
                         sizeElement.textContent = sizeFormatted;
                     }
                 }
             } catch (error) {
                 console.error('Error getting file size:', error);
+                const sizeElement = document.getElementById(`size-${cardId}`);
+                if (sizeElement) {
+                    sizeElement.textContent = 'PDF';
+                }
             }
         }
 
@@ -1222,7 +1638,7 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Open PDF in modal
+        // Open PDF in modal - Mobile Optimized
         async function openPDFModal(pdfPath, title) {
             const modal = document.getElementById('pdfModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -1231,6 +1647,9 @@
             modalTitle.textContent = title;
             pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto;"></div>';
             modal.style.display = 'block';
+            
+            // Prevent body scroll on mobile
+            document.body.style.overflow = 'hidden';
 
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfPath);
@@ -1244,43 +1663,70 @@
                 console.error('Error loading PDF:', error);
                 pdfViewer.innerHTML = `
                     <div style="text-align: center; padding: 2rem; color: #e74c3c;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem;"></i>
-                        <h3>PDF Yüklenemedi</h3>
-                        <p>Dosya bulunamadı veya bozuk olabilir.</p>
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
+                        <h3 style="margin-bottom: 0.5rem;">PDF Yüklenemedi</h3>
+                        <p style="font-size: 0.9rem;">Dosya bulunamadı veya bozuk olabilir.</p>
                     </div>
                 `;
             }
         }
 
-        // Render specific PDF page
+        // Render specific PDF page - Mobile Optimized
         async function renderPDFPage(pageNum) {
-            const page = await currentPDFDoc.getPage(pageNum);
-            const scale = 1.2;
-            const viewport = page.getViewport({ scale: scale });
+            try {
+                const page = await currentPDFDoc.getPage(pageNum);
+                
+                // Calculate optimal scale for mobile
+                const viewerWidth = document.getElementById('pdfViewer').clientWidth - 32; // Account for padding
+                const viewport = page.getViewport({ scale: 1 });
+                const scale = Math.min(viewerWidth / viewport.width, window.innerWidth < 768 ? 1.2 : 1.5);
+                
+                const scaledViewport = page.getViewport({ scale: scale });
 
-            const canvas = document.createElement('canvas');
-            const context = canvas.getContext('2d');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
+                const canvas = document.createElement('canvas');
+                const context = canvas.getContext('2d');
+                canvas.height = scaledViewport.height;
+                canvas.width = scaledViewport.width;
 
-            const renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
+                const renderContext = {
+                    canvasContext: context,
+                    viewport: scaledViewport
+                };
 
-            await page.render(renderContext).promise;
+                // Show loading while rendering
+                const pdfViewer = document.getElementById('pdfViewer');
+                pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto;"></div>';
 
-            const pdfViewer = document.getElementById('pdfViewer');
-            pdfViewer.innerHTML = '';
-            pdfViewer.appendChild(canvas);
+                await page.render(renderContext).promise;
+
+                pdfViewer.innerHTML = '';
+                pdfViewer.appendChild(canvas);
+
+                // Scroll to top of viewer
+                pdfViewer.scrollTop = 0;
+            } catch (error) {
+                console.error('Error rendering page:', error);
+                const pdfViewer = document.getElementById('pdfViewer');
+                pdfViewer.innerHTML = `
+                    <div style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                        <p>Sayfa yüklenemiyor</p>
+                    </div>
+                `;
+            }
         }
 
         // Update page navigation controls
         function updatePageControls() {
-            document.getElementById('currentPage').textContent = currentPageNum;
-            document.getElementById('totalPages').textContent = totalPages;
-            document.getElementById('prevPage').disabled = currentPageNum <= 1;
-            document.getElementById('nextPage').disabled = currentPageNum >= totalPages;
+            const currentPageElement = document.getElementById('currentPage');
+            const totalPagesElement = document.getElementById('totalPages');
+            const prevButton = document.getElementById('prevPage');
+            const nextButton = document.getElementById('nextPage');
+
+            if (currentPageElement) currentPageElement.textContent = currentPageNum;
+            if (totalPagesElement) totalPagesElement.textContent = totalPages;
+            if (prevButton) prevButton.disabled = currentPageNum <= 1;
+            if (nextButton) nextButton.disabled = currentPageNum >= totalPages;
         }
 
         // Navigate to previous page
@@ -1306,9 +1752,39 @@
             const modal = document.getElementById('pdfModal');
             modal.style.display = 'none';
             currentPDFDoc = null;
+            
+            // Restore body scroll
+            document.body.style.overflow = 'auto';
         }
 
-        // Close modal when clicking outside
+        // Touch and keyboard controls for PDF modal
+        let touchStartX = 0;
+        let touchStartY = 0;
+
+        document.getElementById('pdfViewer').addEventListener('touchstart', function(e) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        document.getElementById('pdfViewer').addEventListener('touchend', function(e) {
+            const touchEndX = e.changedTouches[0].clientX;
+            const touchEndY = e.changedTouches[0].clientY;
+            const diffX = touchStartX - touchEndX;
+            const diffY = touchStartY - touchEndY;
+
+            // Horizontal swipe detection
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                if (diffX > 0) {
+                    // Swipe left - next page
+                    nextPage();
+                } else {
+                    // Swipe right - previous page
+                    previousPage();
+                }
+            }
+        }, { passive: true });
+
+        // Close modal when clicking outside or pressing escape
         window.onclick = function(event) {
             const modal = document.getElementById('pdfModal');
             if (event.target === modal) {
@@ -1320,8 +1796,34 @@
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closePDFModal();
+            } else if (document.getElementById('pdfModal').style.display === 'block') {
+                if (event.key === 'ArrowLeft') {
+                    previousPage();
+                } else if (event.key === 'ArrowRight') {
+                    nextPage();
+                }
             }
         });
+
+        // Handle orientation change
+        window.addEventListener('orientationchange', function() {
+            setTimeout(() => {
+                if (currentPDFDoc && currentPageNum) {
+                    renderPDFPage(currentPageNum);
+                }
+            }, 100);
+        });
+
+        // Handle window resize
+        let resizeTimeout;
+        window.addEventListener('resize', function() {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                if (currentPDFDoc && currentPageNum) {
+                    renderPDFPage(currentPageNum);
+                }
+            }, 250);
+        }, { passive: true });
     </script>
 </body>
 </html>
