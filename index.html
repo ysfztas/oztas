@@ -770,6 +770,13 @@
             margin-right: 1rem;
         }
 
+        .pdf-help-text {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-weight: 400;
+            margin-top: 0.3rem;
+        }
+
         .pdf-close {
             background: none;
             border: none;
@@ -798,7 +805,39 @@
             overflow: auto;
             text-align: center;
             padding: 1rem;
-                         background: #f8f9fa;
+            background: #f8f9fa;
+            position: relative;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+
+        .pdf-viewer::before,
+        .pdf-viewer::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 25%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            transition: background 0.2s ease;
+        }
+
+        .pdf-viewer::before {
+            left: 0;
+            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), transparent);
+        }
+
+        .pdf-viewer::after {
+            right: 0;
+            background: linear-gradient(to left, rgba(52, 152, 219, 0.1), transparent);
+        }
+
+        .pdf-viewer:active::before,
+        .pdf-viewer:active::after {
+            background: rgba(52, 152, 219, 0.2);
         }
 
         .pdf-viewer canvas {
@@ -1148,7 +1187,10 @@
     <div id="pdfModal" class="pdf-modal">
         <div class="pdf-modal-content">
             <div class="pdf-modal-header">
-                <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
+                <div>
+                    <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
+                    <div class="pdf-help-text">Yan tarafları dokunun veya kaydırın</div>
+                </div>
                 <button class="pdf-close" onclick="closePDFModal()" aria-label="Kapat">&times;</button>
             </div>
             <div class="pdf-viewer" id="pdfViewer">
@@ -1231,7 +1273,7 @@
                         </div>
                         <div>
                             <strong>Telefon:</strong><br>
-                            04428163005
+                            <a href="tel:+9004428163005" style="color: white; text-decoration: none;">04428163005</a>
                         </div>
                     </div>
 
@@ -1241,7 +1283,7 @@
                         </div>
                                                  <div>
                              <strong>E-mail:</strong><br>
-                             info@oztasmobilya.com
+                             oztasmobilyaoltu@gmail.com
                          </div>
                     </div>
 
@@ -1492,12 +1534,9 @@
                             <span class="pdf-size" id="size-${cardId}">...</span>
                         </div>
                         <div class="pdf-actions">
-                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); openPDFModal('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle">
+                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); openPDFModal('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle" style="width: 100%;">
                                  <i class="fas fa-eye"></i> Görüntüle
                              </button>
-                            <a href="${pdfPath}" download class="pdf-btn pdf-btn-download" onclick="event.stopPropagation();">
-                                <i class="fas fa-download"></i> İndir
-                            </a>
                         </div>
                     </div>
                 </div>
@@ -1611,6 +1650,16 @@
             // Prevent body scroll on mobile
             document.body.style.overflow = 'hidden';
 
+            // Try to lock screen orientation to landscape on mobile devices
+            try {
+                if (screen.orientation && screen.orientation.lock) {
+                    await screen.orientation.lock('landscape');
+                }
+            } catch (error) {
+                // Orientation lock not supported or failed, continue normally
+                console.log('Screen orientation lock not supported or failed');
+            }
+
             try {
                 const loadingTask = pdfjsLib.getDocument(pdfPath);
                 currentPDFDoc = await loadingTask.promise;
@@ -1715,25 +1764,56 @@
             
             // Restore body scroll
             document.body.style.overflow = 'auto';
+            
+            // Unlock screen orientation
+            try {
+                if (screen.orientation && screen.orientation.unlock) {
+                    screen.orientation.unlock();
+                }
+            } catch (error) {
+                // Orientation unlock not supported or failed
+                console.log('Screen orientation unlock not supported or failed');
+            }
         }
 
-        // Touch and keyboard controls for PDF modal
+        // Enhanced touch and keyboard controls for PDF modal
         let touchStartX = 0;
         let touchStartY = 0;
+        let touchStartTime = 0;
 
         document.getElementById('pdfViewer').addEventListener('touchstart', function(e) {
             touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
+            touchStartTime = Date.now();
         }, { passive: true });
 
         document.getElementById('pdfViewer').addEventListener('touchend', function(e) {
             const touchEndX = e.changedTouches[0].clientX;
             const touchEndY = e.changedTouches[0].clientY;
+            const touchEndTime = Date.now();
+            const touchDuration = touchEndTime - touchStartTime;
             const diffX = touchStartX - touchEndX;
             const diffY = touchStartY - touchEndY;
+            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
 
-            // Horizontal swipe detection
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+            // Quick tap detection for tap zones (left/right side navigation)
+            if (distance < 10 && touchDuration < 300) {
+                const viewerWidth = e.currentTarget.clientWidth;
+                const tapZoneWidth = viewerWidth * 0.25; // 25% of viewer width on each side
+                
+                if (touchEndX < tapZoneWidth) {
+                    // Left side tap - previous page
+                    previousPage();
+                    return;
+                } else if (touchEndX > viewerWidth - tapZoneWidth) {
+                    // Right side tap - next page
+                    nextPage();
+                    return;
+                }
+            }
+
+            // Improved horizontal swipe detection
+            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
                 if (diffX > 0) {
                     // Swipe left - next page
                     nextPage();
