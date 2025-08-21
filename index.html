@@ -758,6 +758,7 @@
             display: block;
             align-items: flex-start;
             justify-content: flex-start;
+            touch-action: pan-x pan-y pinch-zoom;
         }
 
         .pdf-modal.ultra-fullscreen .pdf-viewer canvas {
@@ -767,6 +768,8 @@
             width: auto;
             height: auto;
             min-width: 100vw;
+            transform-origin: top left;
+            transition: transform 0.1s ease-out;
         }
 
         .pdf-modal-content {
@@ -1222,7 +1225,7 @@
             <div class="pdf-modal-header">
                 <div>
                     <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
-                    <div class="pdf-help-text">Yan tarafları dokunun, ortaya basın veya kaydırın</div>
+                    <div class="pdf-help-text">Yan tarafları dokunun, ortaya basın, 2 parmakla zoom yapın</div>
                 </div>
                 <button class="pdf-close" onclick="closePDFModal()" aria-label="Kapat">&times;</button>
             </div>
@@ -1456,6 +1459,18 @@
         let currentPageNum = 1;
         let totalPages = 0;
         let pdfFiles = [];
+
+        // Zoom and Pan state for ultra fullscreen
+        let currentScale = 1;
+        let currentTranslateX = 0;
+        let currentTranslateY = 0;
+        let initialDistance = 0;
+        let initialScale = 1;
+        let isPinching = false;
+        let isPanning = false;
+        let lastPanX = 0;
+        let lastPanY = 0;
+        let lastTapTime = 0;
 
         // PDF.js worker configuration
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
@@ -1875,6 +1890,41 @@
             }
         }
 
+        // Reset zoom and pan state
+        function resetZoomPan() {
+            currentScale = 1;
+            currentTranslateX = 0;
+            currentTranslateY = 0;
+            isPinching = false;
+            isPanning = false;
+        }
+
+        // Apply transform to PDF canvas
+        function applyCanvasTransform() {
+            const canvas = document.querySelector('#pdfViewer canvas');
+            if (canvas) {
+                const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
+                canvas.style.transform = transform;
+            }
+        }
+
+        // Calculate distance between two touch points
+        function getDistance(touches) {
+            if (touches.length < 2) return 0;
+            const dx = touches[0].clientX - touches[1].clientX;
+            const dy = touches[0].clientY - touches[1].clientY;
+            return Math.sqrt(dx * dx + dy * dy);
+        }
+
+        // Get center point between two touches
+        function getCenter(touches) {
+            if (touches.length < 2) return { x: touches[0].clientX, y: touches[0].clientY };
+            return {
+                x: (touches[0].clientX + touches[1].clientX) / 2,
+                y: (touches[0].clientY + touches[1].clientY) / 2
+            };
+        }
+
         // Toggle ultra fullscreen mode
         function toggleUltraFullscreen() {
             const modal = document.getElementById('pdfModal');
@@ -1883,9 +1933,11 @@
             if (isUltraFullscreen) {
                 // Exit ultra fullscreen
                 modal.classList.remove('ultra-fullscreen');
+                resetZoomPan();
             } else {
                 // Enter ultra fullscreen
                 modal.classList.add('ultra-fullscreen');
+                resetZoomPan();
             }
             
             // Re-render current page to adjust canvas size
@@ -1919,6 +1971,7 @@
             modal.classList.remove('fullscreen');
             modal.classList.remove('ultra-fullscreen');
             currentPDFDoc = null;
+            resetZoomPan();
             
             // Restore body scroll
             document.body.style.overflow = 'auto';
@@ -1939,54 +1992,159 @@
         let touchStartTime = 0;
 
         document.getElementById('pdfViewer').addEventListener('touchstart', function(e) {
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            touchStartTime = Date.now();
-        }, { passive: true });
+            const modal = document.getElementById('pdfModal');
+            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            
+            if (isUltraFullscreen && e.touches.length === 2) {
+                // Two finger pinch start
+                isPinching = true;
+                isPanning = false;
+                initialDistance = getDistance(e.touches);
+                initialScale = currentScale;
+                
+                // Disable smooth transition during pinch
+                const canvas = document.querySelector('#pdfViewer canvas');
+                if (canvas) canvas.style.transition = 'none';
+                
+                e.preventDefault();
+            } else if (isUltraFullscreen && e.touches.length === 1 && currentScale > 1) {
+                // Single finger pan start (only if zoomed)
+                isPanning = true;
+                isPinching = false;
+                lastPanX = e.touches[0].clientX;
+                lastPanY = e.touches[0].clientY;
+                
+                // Disable smooth transition during pan
+                const canvas = document.querySelector('#pdfViewer canvas');
+                if (canvas) canvas.style.transition = 'none';
+            } else {
+                // Normal touch for navigation
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                touchStartTime = Date.now();
+                isPinching = false;
+                isPanning = false;
+            }
+        }, { passive: false });
+
+        document.getElementById('pdfViewer').addEventListener('touchmove', function(e) {
+            const modal = document.getElementById('pdfModal');
+            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            
+            if (isUltraFullscreen && isPinching && e.touches.length === 2) {
+                // Handle pinch zoom
+                const currentDistance = getDistance(e.touches);
+                if (initialDistance > 0) {
+                    const scaleChange = currentDistance / initialDistance;
+                    currentScale = Math.max(0.5, Math.min(5, initialScale * scaleChange));
+                    applyCanvasTransform();
+                }
+                e.preventDefault();
+            } else if (isUltraFullscreen && isPanning && e.touches.length === 1) {
+                // Handle pan
+                const deltaX = e.touches[0].clientX - lastPanX;
+                const deltaY = e.touches[0].clientY - lastPanY;
+                
+                currentTranslateX += deltaX;
+                currentTranslateY += deltaY;
+                
+                lastPanX = e.touches[0].clientX;
+                lastPanY = e.touches[0].clientY;
+                
+                applyCanvasTransform();
+                e.preventDefault();
+            }
+        }, { passive: false });
 
         document.getElementById('pdfViewer').addEventListener('touchend', function(e) {
-            const touchEndX = e.changedTouches[0].clientX;
-            const touchEndY = e.changedTouches[0].clientY;
-            const touchEndTime = Date.now();
-            const touchDuration = touchEndTime - touchStartTime;
-            const diffX = touchStartX - touchEndX;
-            const diffY = touchStartY - touchEndY;
-            const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-
-            // Quick tap detection
-            if (distance < 10 && touchDuration < 300) {
-                const viewerWidth = e.currentTarget.clientWidth;
-                const tapZoneWidth = viewerWidth * 0.25; // 25% of viewer width on each side
-                
-                if (touchEndX < tapZoneWidth) {
-                    // Left side tap - previous page
-                    previousPage();
-                    return;
-                } else if (touchEndX > viewerWidth - tapZoneWidth) {
-                    // Right side tap - next page
-                    nextPage();
-                    return;
-                } else {
-                    // Center tap - toggle ultra fullscreen
-                    toggleUltraFullscreen();
-                    return;
-                }
-            }
-
-            // Improved horizontal swipe detection (only if not in ultra fullscreen)
             const modal = document.getElementById('pdfModal');
-            if (!modal.classList.contains('ultra-fullscreen')) {
-                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
-                    if (diffX > 0) {
-                        // Swipe left - next page
-                        nextPage();
-                    } else {
-                        // Swipe right - previous page
+            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            
+            // Re-enable smooth transition
+            const canvas = document.querySelector('#pdfViewer canvas');
+            if (canvas) {
+                canvas.style.transition = 'transform 0.1s ease-out';
+            }
+            
+            if (isPinching || isPanning) {
+                // End pinch or pan gesture
+                isPinching = false;
+                isPanning = false;
+                return;
+            }
+            
+            // Normal tap/swipe detection
+            if (e.changedTouches.length > 0) {
+                const touchEndX = e.changedTouches[0].clientX;
+                const touchEndY = e.changedTouches[0].clientY;
+                const touchEndTime = Date.now();
+                const touchDuration = touchEndTime - touchStartTime;
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                const distance = Math.sqrt(diffX * diffX + diffY * diffY);
+
+                // Quick tap detection
+                if (distance < 10 && touchDuration < 300) {
+                    const currentTime = Date.now();
+                    const isDoubleTap = currentTime - lastTapTime < 300;
+                    lastTapTime = currentTime;
+                    
+                    const viewerWidth = e.currentTarget.clientWidth;
+                    const tapZoneWidth = viewerWidth * 0.25; // 25% of viewer width on each side
+                    
+                    if (touchEndX < tapZoneWidth) {
+                        // Left side tap - previous page
                         previousPage();
+                        return;
+                    } else if (touchEndX > viewerWidth - tapZoneWidth) {
+                        // Right side tap - next page
+                        nextPage();
+                        return;
+                    } else {
+                        // Center tap
+                        if (isUltraFullscreen && isDoubleTap && currentScale > 1) {
+                            // Double tap in ultra fullscreen - reset zoom
+                            resetZoomPan();
+                            applyCanvasTransform();
+                            return;
+                        } else {
+                            // Single tap - toggle ultra fullscreen
+                            toggleUltraFullscreen();
+                            return;
+                        }
+                    }
+                }
+
+                // Improved horizontal swipe detection (only if not in ultra fullscreen)
+                if (!isUltraFullscreen) {
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
+                        if (diffX > 0) {
+                            // Swipe left - next page
+                            nextPage();
+                        } else {
+                            // Swipe right - previous page
+                            previousPage();
+                        }
                     }
                 }
             }
         }, { passive: true });
+
+        // Mouse wheel zoom support for desktop
+        document.getElementById('pdfViewer').addEventListener('wheel', function(e) {
+            const modal = document.getElementById('pdfModal');
+            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
+            
+            if (isUltraFullscreen && e.ctrlKey) {
+                e.preventDefault();
+                
+                const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
+                const newScale = currentScale * scaleFactor;
+                currentScale = Math.max(0.5, Math.min(5, newScale));
+                
+                applyCanvasTransform();
+            }
+        }, { passive: false });
 
         // Close modal when clicking outside or pressing escape
         window.onclick = function(event) {
