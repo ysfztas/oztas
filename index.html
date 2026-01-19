@@ -590,15 +590,10 @@
             line-height: 1.6;
         }
 
-        /* PDF Yükleme ve Listeleme */
+        /* PDF Katalog Listesi */
         .pdf-uploader {
-            background: rgba(255, 255, 255, 0.9);
-            -webkit-backdrop-filter: blur(20px);
-            backdrop-filter: blur(20px);
-            border-radius: 20px;
-            padding: 1.5rem;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: transparent;
+            padding: 0;
         }
 
         .upload-box {
@@ -664,84 +659,159 @@
 
         .pdf-list {
             display: grid;
-            gap: 1rem;
+            grid-template-columns: 1fr;
+            gap: 1.5rem;
+            margin-top: 1rem;
         }
 
         .pdf-item {
-            background: #ffffff;
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            display: grid;
-            gap: 0.8rem;
-            border: 1px solid #ecf0f1;
-            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 20px;
+            padding: 1.8rem 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+            border: 2px solid transparent;
+            background-clip: padding-box;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .pdf-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pdf-item:hover::before,
+        .pdf-item:active::before {
+            opacity: 1;
+        }
+
+        .pdf-item:hover,
+        .pdf-item:active {
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.2);
         }
 
         .pdf-item-header {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 1rem;
-            flex-wrap: wrap;
+            flex-direction: column;
+            gap: 0.6rem;
         }
 
         .pdf-item-title {
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 1.25rem;
             color: #2c3e50;
             word-break: break-word;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            line-height: 1.4;
+        }
+
+        .pdf-item-title i {
+            font-size: 1.8rem;
+            flex-shrink: 0;
         }
 
         .pdf-item-size {
-            font-size: 0.85rem;
+            font-size: 0.95rem;
             color: #7f8c8d;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .pdf-item-size::before {
+            content: '📄';
+            font-size: 1rem;
         }
 
         .pdf-item-actions {
             display: flex;
-            gap: 0.6rem;
+            gap: 0.8rem;
             flex-wrap: wrap;
+            margin-top: 0.5rem;
         }
 
-        .pdf-link-btn,
-        .pdf-remove-btn {
+        .pdf-link-btn {
             border: none;
-            border-radius: 8px;
-            padding: 0.6rem 0.9rem;
-            font-weight: 600;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            font-weight: 700;
             cursor: pointer;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
-            transition: all 0.2s ease;
-            font-size: 0.9rem;
+            justify-content: center;
+            gap: 0.6rem;
+            transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+            font-size: 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            position: relative;
+            overflow: hidden;
         }
 
-        .pdf-link-btn {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
+        .pdf-link-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 100%);
+            transition: left 0.3s ease;
+        }
+
+        .pdf-link-btn:hover::before,
+        .pdf-link-btn:active::before {
+            left: 100%;
         }
 
         .pdf-link-btn:hover,
         .pdf-link-btn:active {
-            transform: translateY(-1px);
-            box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
 
-        .pdf-remove-btn {
-            background: #f2f2f2;
-            color: #2c3e50;
-        }
-
-        .pdf-remove-btn:hover,
-        .pdf-remove-btn:active {
-            background: #e0e0e0;
+        .pdf-link-btn i {
+            font-size: 1.1rem;
         }
 
         .pdf-empty {
             text-align: center;
             color: #7f8c8d;
-            font-size: 0.95rem;
+            font-size: 1rem;
+            padding: 3rem 1.5rem;
+            background: rgba(255, 255, 255, 0.5);
+            border-radius: 16px;
+            border: 2px dashed #dfe6e9;
+        }
+
+        .pdf-empty i {
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        .pdf-empty p {
+            margin: 0;
+            font-weight: 500;
         }
 
         /* Animasyonlar */
@@ -822,7 +892,16 @@
             }
 
             .pdf-list {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 2rem;
+            }
+
+            .pdf-item {
+                padding: 2rem 1.8rem;
+            }
+
+            .pdf-item-title {
+                font-size: 1.35rem;
             }
         }
 
@@ -846,7 +925,21 @@
             }
 
             .pdf-list {
-                grid-template-columns: repeat(3, minmax(0, 1fr));
+                grid-template-columns: repeat(3, 1fr);
+                gap: 2.5rem;
+            }
+
+            .pdf-item {
+                padding: 2.5rem 2rem;
+            }
+
+            .pdf-item-title {
+                font-size: 1.4rem;
+            }
+
+            .pdf-link-btn {
+                padding: 1.1rem 2rem;
+                font-size: 1.05rem;
             }
 
             .about-image {
@@ -859,22 +952,44 @@
             scroll-behavior: smooth;
         }
 
-        /* Dokunma iyileştirmeleri */
+        /* Dokunma iyileştirmeleri - Mobil */
         @media (hover: none) and (pointer: coarse) {
             .product-card:hover,
+            .pdf-item:hover,
             .cta-button:hover,
-            .submit-btn:hover {
+            .submit-btn:hover,
+            .pdf-link-btn:hover {
                 transform: none;
                 box-shadow: initial;
             }
 
-            .product-card:active {
+            .product-card:active,
+            .pdf-item:active {
                 transform: scale(0.98);
             }
 
             .cta-button:active,
             .submit-btn:active {
                 transform: scale(0.95);
+            }
+
+            .pdf-link-btn:active {
+                transform: scale(0.97);
+            }
+
+            /* Mobilde daha büyük dokunma alanları */
+            .pdf-link-btn {
+                padding: 1.2rem 1.5rem;
+                font-size: 1.05rem;
+                min-height: 50px;
+            }
+
+            .pdf-item {
+                padding: 2rem 1.5rem;
+            }
+
+            .pdf-item-title {
+                font-size: 1.3rem;
             }
         }
     </style>
@@ -910,23 +1025,12 @@
     <section id="products" class="section">
         <div class="container">
             <h2 class="section-title">Ürün Katalogları</h2>
-            <p class="section-subtitle">PDF kataloglarınızı yükleyin ve görüntüleyin</p>
+            <p class="section-subtitle">Ürün kataloglarımızı görüntüleyin ve indirin</p>
 
-            <div class="pdf-uploader fade-in-up">
-                <div class="upload-box">
-                    <input class="upload-input" type="file" id="pdfUpload" accept="application/pdf" multiple>
-                    <label for="pdfUpload" class="upload-label">
-                        <i class="fas fa-file-upload"></i>
-                        <span>PDF yükle</span>
-                        <small>Dosyalar sadece bu tarayıcı oturumunda görüntülenir.</small>
-                    </label>
-                </div>
-                <div class="pdf-actions-row">
-                    <span id="uploadStatus" class="pdf-item-size">Yüklenen dosyalar varsayılan PDF görüntüleyicide açılır.</span>
-                    <button class="pdf-clear-btn" id="pdfClearBtn" type="button">Listeyi Temizle</button>
-                </div>
-                <div id="pdfList" class="pdf-list">
-                    <div class="pdf-empty">Henüz PDF yüklenmedi.</div>
+            <div id="pdfList" class="pdf-list">
+                <div class="pdf-empty" style="text-align: center; padding: 2rem; color: #7f8c8d;">
+                    <i class="fas fa-file-pdf" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem;"></i>
+                    <p>Kataloglar yükleniyor...</p>
                 </div>
             </div>
         </div>
@@ -1148,20 +1252,10 @@
         let uploadedPDFs = [];
 
 
-        // Sayfa yüklendiğinde PDF yükleyiciyi başlat
+        // Sayfa yüklendiğinde varsayılan PDF'leri yükle
         document.addEventListener('DOMContentLoaded', function() {
-            initializePDFUploader();
             loadDefaultPDFs();
         });
-
-        // PDF yükleyici başlatma
-        function initializePDFUploader() {
-            const pdfUpload = document.getElementById('pdfUpload');
-            const clearBtn = document.getElementById('pdfClearBtn');
-
-            pdfUpload.addEventListener('change', handlePDFUpload);
-            clearBtn.addEventListener('click', clearAllPDFs);
-        }
 
         // Varsayılan PDF'leri yükle (pdfs klasöründen)
         async function loadDefaultPDFs() {
@@ -1190,53 +1284,14 @@
             updatePDFList();
         }
 
-        // PDF yükleme işlemini yönet
-        function handlePDFUpload(event) {
-            const files = event.target.files;
-            const uploadStatus = document.getElementById('uploadStatus');
-
-            if (files.length === 0) return;
-
-            uploadStatus.textContent = `${files.length} PDF dosyası yükleniyor...`;
-            uploadStatus.style.color = '#3498db';
-
-            Array.from(files).forEach(file => {
-                if (file.type === 'application/pdf') {
-                    const fileURL = URL.createObjectURL(file);
-                    uploadedPDFs.push({
-                        name: file.name.replace('.pdf', ''),
-                        url: fileURL,
-                        size: file.size,
-                        isDefault: false,
-                        file: file
-                    });
-                }
-            });
-
-            updatePDFList();
-            event.target.value = ''; // Reset input
-
-            setTimeout(() => {
-                uploadStatus.textContent = `${files.length} PDF başarıyla yüklendi!`;
-                uploadStatus.style.color = '#27ae60';
-                setTimeout(() => {
-                    uploadStatus.textContent = '';
-                }, 3000);
-            }, 500);
-        }
-
         // PDF listesini güncelle
         function updatePDFList() {
             const pdfList = document.getElementById('pdfList');
-            const clearBtn = document.getElementById('pdfClearBtn');
 
             if (uploadedPDFs.length === 0) {
-                pdfList.innerHTML = '<div class="pdf-empty">Henüz PDF yüklenmedi.</div>';
-                clearBtn.style.display = 'none';
+                pdfList.innerHTML = '<div class="pdf-empty" style="text-align: center; padding: 2rem; color: #7f8c8d;"><i class="fas fa-file-pdf" style="font-size: 3rem; color: #bdc3c7; margin-bottom: 1rem;"></i><p>Katalog bulunamadı.</p></div>';
                 return;
             }
-
-            clearBtn.style.display = 'inline-block';
 
             pdfList.innerHTML = uploadedPDFs.map((pdf, index) => `
                 <div class="pdf-item">
@@ -1246,18 +1301,13 @@
                                 <i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 0.5rem;"></i>
                                 ${pdf.name}
                             </div>
-                            <div class="pdf-item-size">${formatFileSize(pdf.size)}${pdf.isDefault ? ' • Varsayılan' : ''}</div>
+                            <div class="pdf-item-size">${formatFileSize(pdf.size)}</div>
                         </div>
                     </div>
                     <div class="pdf-item-actions">
                         <a href="${pdf.url}" target="_blank" class="pdf-link-btn">
                             <i class="fas fa-external-link-alt"></i> Görüntüle
                         </a>
-                        ${!pdf.isDefault ? `
-                            <button class="pdf-remove-btn" onclick="removePDF(${index})">
-                                <i class="fas fa-times"></i> Kaldır
-                            </button>
-                        ` : ''}
                     </div>
                 </div>
             `).join('');
@@ -1275,45 +1325,6 @@
             return parseFloat((numBytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // PDF'i listeden kaldır
-        function removePDF(index) {
-            const pdf = uploadedPDFs[index];
-            
-            // Yüklenen dosyalar için URL'yi iptal et
-            if (!pdf.isDefault && pdf.url.startsWith('blob:')) {
-                URL.revokeObjectURL(pdf.url);
-            }
-            
-            uploadedPDFs.splice(index, 1);
-            updatePDFList();
-        }
-
-        // Tüm PDF'leri temizle
-        function clearAllPDFs() {
-            if (!confirm('Yüklenen tüm PDF dosyalarını silmek istediğinizden emin misiniz?')) {
-                return;
-            }
-
-            // Yüklenen dosyalar için URL'leri iptal et
-            uploadedPDFs.forEach(pdf => {
-                if (!pdf.isDefault && pdf.url.startsWith('blob:')) {
-                    URL.revokeObjectURL(pdf.url);
-                }
-            });
-
-            uploadedPDFs = [];
-            updatePDFList();
-
-            const uploadStatus = document.getElementById('uploadStatus');
-            uploadStatus.textContent = 'Tüm PDF dosyaları temizlendi.';
-            uploadStatus.style.color = '#95a5a6';
-            setTimeout(() => {
-                uploadStatus.textContent = '';
-            }, 3000);
-
-            // Varsayılan PDF'leri tekrar yükle
-            loadDefaultPDFs();
-        }
     </script>
 </body>
 </html>
