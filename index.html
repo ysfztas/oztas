@@ -16,8 +16,8 @@
         body {
             font-family: 'Inter', sans-serif;
             line-height: 1.6;
-            color: #2c3e50;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #1e293b;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e0e7ff 100%);
             overflow-x: hidden;
             position: relative;
         }
@@ -29,8 +29,9 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
-                        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            background: radial-gradient(circle at 20% 50%, rgba(79, 70, 229, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(236, 72, 153, 0.08) 0%, transparent 50%),
+                        radial-gradient(circle at 50% 20%, rgba(249, 115, 22, 0.05) 0%, transparent 50%);
             pointer-events: none;
             z-index: -1;
         }
@@ -72,7 +73,7 @@
         .logo {
             font-size: 1.8rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -84,7 +85,7 @@
         }
 
         .logo i {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -143,7 +144,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             transition: left 0.3s ease;
             z-index: -1;
             border-radius: 25px;
@@ -178,7 +179,7 @@
 
         /* Modern Hero Section */
         .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 35%, #EC4899 70%, #F97316 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -196,7 +197,7 @@
             left: 0;
             width: 100%;
             height: 100px;
-            background: linear-gradient(to top, rgba(245, 247, 250, 1), transparent);
+            background: linear-gradient(to top, #f1f5f9, transparent);
         }
 
         .hero::before {
@@ -254,7 +255,7 @@
         .cta-button {
             display: inline-block;
             background: white;
-            color: #667eea;
+            color: #4F46E5;
             padding: 18px 45px;
             text-decoration: none;
             border-radius: 50px;
@@ -277,7 +278,7 @@
             left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             transition: left 0.5s cubic-bezier(0.23, 1, 0.32, 1);
             z-index: -1;
         }
@@ -320,10 +321,10 @@
             font-size: 2.5rem;
             margin-bottom: 1rem;
             font-weight: 800;
-            color: #2c3e50;
+            color: #1e293b;
             position: relative;
             letter-spacing: -0.02em;
-            background: linear-gradient(135deg, #2c3e50 0%, #667eea 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #4F46E5 50%, #EC4899 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -337,9 +338,9 @@
             transform: translateX(-50%);
             width: 80px;
             height: 5px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #4F46E5 0%, #EC4899 50%, #F97316 100%);
             border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
         }
 
         .section-subtitle {
@@ -401,7 +402,7 @@
 
         .product-image {
             height: 180px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -461,7 +462,7 @@
             right: -10%;
             width: 500px;
             height: 500px;
-            background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(79, 70, 229, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             animation: floatAnimation 20s ease-in-out infinite;
         }
@@ -473,7 +474,7 @@
             left: -10%;
             width: 400px;
             height: 400px;
-            background: radial-gradient(circle, rgba(118, 75, 162, 0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(236, 72, 153, 0.1) 0%, transparent 70%);
             border-radius: 50%;
             animation: floatAnimation 25s ease-in-out infinite reverse;
         }
@@ -493,11 +494,11 @@
         .about-text h3 {
             font-size: 2rem;
             margin-bottom: 1.5rem;
-            color: #2c3e50;
+            color: #1e293b;
             font-weight: 800;
             letter-spacing: -0.02em;
             line-height: 1.2;
-            background: linear-gradient(135deg, #2c3e50 0%, #667eea 100%);
+            background: linear-gradient(135deg, #1e293b 0%, #4F46E5 50%, #EC4899 100%);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -531,13 +532,13 @@
         .feature-item:hover {
             transform: translateX(10px);
             background: rgba(255, 255, 255, 0.8);
-            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.15);
+            box-shadow: 0 10px 30px rgba(79, 70, 229, 0.15);
         }
 
         .feature-icon {
             width: 55px;
             height: 55px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -545,7 +546,7 @@
             color: white;
             font-size: 1.3rem;
             flex-shrink: 0;
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(79, 70, 229, 0.35);
         }
 
         .feature-text {
@@ -580,7 +581,7 @@
 
         /* Modern Contact Section */
         .contact {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 35%, #EC4899 70%, #F97316 100%);
             color: white;
             position: relative;
             overflow: hidden;
@@ -645,7 +646,7 @@
             width: 50px;
             height: 50px;
             background: white;
-            color: #667eea;
+            color: #4F46E5;
             border-radius: 15px;
             display: flex;
             align-items: center;
@@ -694,7 +695,7 @@
         }
 
         .submit-btn {
-            background: linear-gradient(45deg, #e74c3c, #f39c12);
+            background: linear-gradient(135deg, #4F46E5 0%, #EC4899 100%);
             color: white;
             padding: 15px 30px;
             border: none;
@@ -710,7 +711,7 @@
         .submit-btn:hover,
         .submit-btn:active {
             transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(231, 76, 60, 0.4);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.4);
         }
 
         /* Modern Footer */
@@ -730,7 +731,7 @@
             left: 0;
             right: 0;
             height: 3px;
-            background: linear-gradient(90deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            background: linear-gradient(90deg, #4F46E5 0%, #EC4899 50%, #F97316 100%);
         }
 
         footer p {
@@ -771,7 +772,7 @@
 
         .upload-label i {
             font-size: 2.2rem;
-            color: #667eea;
+            color: #4F46E5;
         }
 
         .upload-label small {
@@ -836,7 +837,7 @@
             left: 0;
             right: 0;
             height: 4px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(90deg, #4F46E5 0%, #EC4899 50%, #F97316 100%);
             opacity: 0;
             transition: opacity 0.3s ease;
         }
@@ -849,8 +850,8 @@
         .pdf-item:hover,
         .pdf-item:active {
             transform: translateY(-4px);
-            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
-            border-color: rgba(102, 126, 234, 0.2);
+            box-shadow: 0 15px 40px rgba(79, 70, 229, 0.2);
+            border-color: rgba(79, 70, 229, 0.3);
         }
 
         .pdf-item-header {
@@ -909,11 +910,11 @@
             gap: 0.6rem;
             transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
             font-size: 1rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 50%, #EC4899 100%);
             color: white;
             width: 100%;
             text-align: center;
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.35);
             position: relative;
             overflow: hidden;
         }
@@ -937,7 +938,7 @@
         .pdf-link-btn:hover,
         .pdf-link-btn:active {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.45);
         }
 
         .pdf-link-btn i {
@@ -1448,18 +1449,18 @@
                     <div class="pdf-item-header">
                         <div>
                             <div class="pdf-item-title">
-                                <i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 0.5rem;"></i>
+                                <i class="fas fa-file-pdf" style="color: #EC4899; margin-right: 0.5rem;"></i>
                                 ${pdf.name}
-                            </div>
-                            <div class="pdf-item-size">${formatFileSize(pdf.size)}</div>
                         </div>
+                            <div class="pdf-item-size">${formatFileSize(pdf.size)}</div>
                     </div>
+                        </div>
                     <div class="pdf-item-actions">
                         <a href="${pdf.url}" target="_blank" class="pdf-link-btn">
                             <i class="fas fa-external-link-alt"></i> Görüntüle
                         </a>
+                        </div>
                     </div>
-                </div>
             `).join('');
         }
 
