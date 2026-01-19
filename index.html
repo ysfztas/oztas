@@ -6,7 +6,6 @@
     <title>Öztas Mobilya - Modern Mobilya Çözümleri</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -591,421 +590,158 @@
             line-height: 1.6;
         }
 
-        /* PDF Katalog Stilleri - Mobil Optimizasyonlu */
-        .catalogs {
-            background: linear-gradient(135deg, rgba(248, 249, 250, 0.9) 0%, rgba(233, 236, 239, 0.9) 100%);
-            position: relative;
+        /* PDF Yükleme ve Listeleme */
+        .pdf-uploader {
+            background: rgba(255, 255, 255, 0.9);
+            -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .catalogs::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600"><rect x="50" y="50" width="80" height="100" rx="6" fill="%23667eea" opacity="0.04"/><rect x="150" y="70" width="60" height="80" rx="4" fill="%23764ba2" opacity="0.04"/><rect x="1000" y="300" width="100" height="120" rx="8" fill="%23667eea" opacity="0.03"/></svg>');
-        }
-
-        .pdf-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-
-        .pdf-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-            transition: all 0.3s ease;
-            border: 1px solid #ecf0f1;
-            cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .pdf-card:hover,
-        .pdf-card:active {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
-        }
-
-        .pdf-preview {
-            height: 200px;
-            background: linear-gradient(45deg, #34495e, #2c3e50);
-            position: relative;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pdf-preview canvas {
-            max-width: 100%;
-            max-height: 100%;
-            border-radius: 8px;
-            box-shadow: 0 3px 10px rgba(0,0,0,0.3);
-        }
-
-        .pdf-preview-placeholder {
-            color: white;
-            font-size: 2.5rem;
+        .upload-box {
+            border: 2px dashed rgba(102, 126, 234, 0.4);
+            border-radius: 16px;
+            padding: 1.5rem;
             text-align: center;
+            background: rgba(102, 126, 234, 0.05);
+            margin-bottom: 1.5rem;
         }
 
-        .pdf-info {
-            padding: 1.2rem;
+        .upload-input {
+            display: none;
         }
 
-        .pdf-info h3 {
-            font-size: 1.2rem;
-            margin-bottom: 0.6rem;
+        .upload-label {
+            cursor: pointer;
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.6rem;
             color: #2c3e50;
             font-weight: 600;
         }
 
-        .pdf-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
+        .upload-label i {
+            font-size: 2.2rem;
+            color: #667eea;
+        }
+
+        .upload-label small {
             font-size: 0.85rem;
             color: #7f8c8d;
-        }
-
-        .pdf-size {
-            background: #3498db;
-            color: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 12px;
-            font-size: 0.75rem;
-        }
-
-        .pdf-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .pdf-btn {
-            flex: 1;
-            padding: 0.8rem 0.8rem;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-block;
+            font-weight: 400;
             text-align: center;
-            font-size: 0.9rem;
-            -webkit-tap-highlight-color: transparent;
+            max-width: 320px;
         }
 
-        .pdf-btn-view {
-            background: linear-gradient(45deg, #3498db, #2980b9);
-            color: white;
-        }
-
-        .pdf-btn-view:hover,
-        .pdf-btn-view:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
-        }
-
-        .pdf-btn-download {
-            background: linear-gradient(45deg, #27ae60, #229954);
-            color: white;
-        }
-
-        .pdf-btn-download:hover,
-        .pdf-btn-download:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.4);
-        }
-
-        /* Tam Ekran PDF Modali */
-        .pdf-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 2000;
-            overflow: hidden;
-        }
-
-        .pdf-modal.fullscreen {
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-        }
-
-        .pdf-modal.ultra-fullscreen .pdf-modal-header {
-            display: none;
-        }
-
-        .pdf-modal.ultra-fullscreen .pdf-controls {
-            display: none;
-        }
-
-        /* Mobil: Doğrudan tam ekran modu */
-        @media (max-width: 768px) {
-            .pdf-controls {
-                display: none;
-            }
-            
-            /* Mobilde PDF önizleme oluşturmayı gizle */
-            .pdf-preview {
-                height: 120px;
-                background: linear-gradient(45deg, #34495e, #2c3e50);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-            
-            .pdf-preview canvas {
-                display: none;
-            }
-            
-            .pdf-preview-placeholder {
-                color: white;
-                font-size: 2rem;
-                text-align: center;
-            }
-            
-            /* Mobilde otomatik ultra tam ekran */
-            .pdf-modal {
-                background: #000;
-            }
-            
-            .pdf-modal-header {
-                display: none;
-            }
-            
-            .pdf-modal-content {
-                background: #000;
-            }
-            
-            .pdf-viewer {
-                height: 100vh !important;
-                padding: 0 !important;
-                display: block !important;
-                align-items: flex-start !important;
-                justify-content: flex-start !important;
-            }
-        }
-
-        .pdf-modal.ultra-fullscreen .pdf-viewer {
-            padding: 0;
-            overflow: auto;
-            height: 100vh;
-            display: block;
-            align-items: flex-start;
-            justify-content: flex-start;
-            touch-action: pan-x pan-y pinch-zoom;
-        }
-
-        /* Mobil özel dokunma optimizasyonları */
-        @media (max-width: 768px) {
-            .pdf-viewer {
-                touch-action: pan-x pan-y pinch-zoom;
-                -webkit-overflow-scrolling: touch;
-            }
-        }
-
-        .pdf-modal.ultra-fullscreen .pdf-viewer canvas {
-            display: block;
-            margin: 0 auto;
-            max-width: none;
-            width: auto;
-            height: auto;
-            min-width: 100vw;
-            transform-origin: top left;
-            transition: transform 0.1s ease-out;
-        }
-
-        .pdf-modal-content {
-            position: relative;
-            margin: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .pdf-modal-header {
-            background: linear-gradient(45deg, #2c3e50, #3498db);
-            color: white;
-            padding: 1rem;
+        .pdf-actions-row {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            flex-shrink: 0;
-            position: sticky;
-            top: 0;
-            z-index: 10;
+            gap: 1rem;
+            margin-top: 0.8rem;
+            flex-wrap: wrap;
         }
 
-        .pdf-modal-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-            flex: 1;
-            margin-right: 1rem;
-        }
-
-        .pdf-help-text {
-            font-size: 0.8rem;
-            opacity: 0.8;
-            font-weight: 400;
-            margin-top: 0.3rem;
-        }
-
-        .pdf-close {
-            background: none;
+        .pdf-clear-btn {
+            background: #ecf0f1;
+            color: #2c3e50;
             border: none;
-            color: white;
-            font-size: 1.8rem;
+            padding: 0.6rem 1rem;
+            border-radius: 10px;
             cursor: pointer;
-            padding: 0.5rem;
-            width: 40px;
-            height: 40px;
+            font-weight: 600;
+            transition: all 0.2s ease;
+        }
+
+        .pdf-clear-btn:hover,
+        .pdf-clear-btn:active {
+            background: #dfe6e9;
+        }
+
+        .pdf-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .pdf-item {
+            background: #ffffff;
+            border-radius: 14px;
+            padding: 1rem 1.2rem;
+            display: grid;
+            gap: 0.8rem;
+            border: 1px solid #ecf0f1;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.06);
+        }
+
+        .pdf-item-header {
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            transition: background 0.3s ease;
-            flex-shrink: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        .pdf-close:hover,
-        .pdf-close:active {
-            background: rgba(255,255,255,0.2);
-        }
-
-        .pdf-viewer {
-            flex: 1;
-            overflow: auto;
-            text-align: center;
-            padding: 0.5rem;
-            background: #000;
-            position: relative;
-            -webkit-user-select: none;
-            -moz-user-select: none;
-            -ms-user-select: none;
-            user-select: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .pdf-viewer::before,
-        .pdf-viewer::after {
-            content: '';
-            position: absolute;
-            top: 0;
-            width: 25%;
-            height: 100%;
-            pointer-events: none;
-            z-index: 1;
-            transition: background 0.2s ease;
-        }
-
-        .pdf-viewer::before {
-            left: 0;
-            background: linear-gradient(to right, rgba(52, 152, 219, 0.1), transparent);
-        }
-
-        .pdf-viewer::after {
-            right: 0;
-            background: linear-gradient(to left, rgba(52, 152, 219, 0.1), transparent);
-        }
-
-        .pdf-viewer:active::before,
-        .pdf-viewer:active::after {
-            background: rgba(52, 152, 219, 0.2);
-        }
-
-        .pdf-viewer canvas {
-            max-width: 100%;
-            margin-bottom: 1rem;
-            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
-            border-radius: 8px;
-            background: white;
-        }
-
-        .pdf-controls {
-            background: rgba(0, 0, 0, 0.8);
-            -webkit-backdrop-filter: blur(10px);
-            backdrop-filter: blur(10px);
-            padding: 0.8rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            flex-shrink: 0;
-            position: sticky;
-            bottom: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
             gap: 1rem;
             flex-wrap: wrap;
         }
 
-        .pdf-nav-btn {
+        .pdf-item-title {
+            font-weight: 600;
+            color: #2c3e50;
+            word-break: break-word;
+        }
+
+        .pdf-item-size {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .pdf-item-actions {
+            display: flex;
+            gap: 0.6rem;
+            flex-wrap: wrap;
+        }
+
+        .pdf-link-btn,
+        .pdf-remove-btn {
+            border: none;
+            border-radius: 8px;
+            padding: 0.6rem 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+
+        .pdf-link-btn {
             background: linear-gradient(45deg, #3498db, #2980b9);
             color: white;
-            border: none;
-            padding: 0.8rem 1.2rem;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            font-size: 0.9rem;
-            -webkit-tap-highlight-color: transparent;
-            min-width: 100px;
         }
 
-        .pdf-nav-btn:hover,
-        .pdf-nav-btn:active {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.4);
+        .pdf-link-btn:hover,
+        .pdf-link-btn:active {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(52, 152, 219, 0.3);
         }
 
-        .pdf-nav-btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
+        .pdf-remove-btn {
+            background: #f2f2f2;
+            color: #2c3e50;
         }
 
-        .page-info {
-            font-weight: 500;
-            color: white;
+        .pdf-remove-btn:hover,
+        .pdf-remove-btn:active {
+            background: #e0e0e0;
+        }
+
+        .pdf-empty {
+            text-align: center;
+            color: #7f8c8d;
             font-size: 0.95rem;
-            white-space: nowrap;
-        }
-
-        /* Yükleme Animasyonu */
-        .loading {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
 
         /* Animasyonlar */
@@ -1085,17 +821,8 @@
                 gap: 3rem;
             }
 
-            .pdf-grid {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 2rem;
-            }
-
-            .pdf-modal-content {
-                margin: 0;
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
-                overflow: hidden;
+            .pdf-list {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -1118,8 +845,8 @@
                 grid-template-columns: repeat(3, 1fr);
             }
 
-            .pdf-grid {
-                grid-template-columns: repeat(3, 1fr);
+            .pdf-list {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
             }
 
             .about-image {
@@ -1135,24 +862,18 @@
         /* Dokunma iyileştirmeleri */
         @media (hover: none) and (pointer: coarse) {
             .product-card:hover,
-            .pdf-card:hover,
             .cta-button:hover,
-            .pdf-btn:hover,
-            .submit-btn:hover,
-            .pdf-nav-btn:hover {
+            .submit-btn:hover {
                 transform: none;
                 box-shadow: initial;
             }
 
-            .product-card:active,
-            .pdf-card:active {
+            .product-card:active {
                 transform: scale(0.98);
             }
 
             .cta-button:active,
-            .pdf-btn:active,
-            .submit-btn:active,
-            .pdf-nav-btn:active {
+            .submit-btn:active {
                 transform: scale(0.95);
             }
         }
@@ -1167,7 +888,6 @@
             <ul class="nav-links" id="navLinks">
                 <li><a href="#home">Ana Sayfa</a></li>
                 <li><a href="#products">Ürünler</a></li>
-                <li><a href="#catalogs">Kataloglar</a></li>
                 <li><a href="#about">Hakkımızda</a></li>
                 <li><a href="#contact">İletişim</a></li>
             </ul>
@@ -1189,113 +909,28 @@
 
     <section id="products" class="section">
         <div class="container">
-            <h2 class="section-title">Ürün Kategorilerimiz</h2>
-            <p class="section-subtitle">Her ihtiyaca uygun, kaliteli ve modern tasarımlı mobilya çözümleri</p>
-            
-            <div class="products-grid">
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-bed"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>Yatak Odası</h3>
-                        <p>Modern ve konforlu yatak odası takımları. Kaliteli malzeme ve şık tasarımla rahat uykular için mükemmel seçenek.</p>
-                    </div>
-                </div>
-
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-couch"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>Oturma Odası</h3>
-                        <p>Şık koltuk takımları ve sehpalar ile oturma odanızı modern bir havaya kavuşturun. Konfor ve estetik bir arada.</p>
-                    </div>
-                </div>
-
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-utensils"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>Yemek Odası</h3>
-                        <p>Ailenizle keyifli yemekler için modern yemek masaları ve sandalyeler. Dayanıklı ve şık tasarımlar.</p>
-                    </div>
-                </div>
-
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-laptop-house"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>Çalışma Odası</h3>
-                        <p>Ev ofisi için ergonomik masa ve sandalyeler. Çalışma verimliliğinizi artıran fonksiyonel tasarımlar.</p>
-                    </div>
-                </div>
-
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-door-open"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>Dolap & Gardırop</h3>
-                        <p>Geniş depolama alanları sunan modern dolap sistemleri. Düzenli yaşam için pratik çözümler.</p>
-                    </div>
-                </div>
-
-                <div class="product-card fade-in-up">
-                    <div class="product-image">
-                        <i class="fas fa-tv"></i>
-                    </div>
-                    <div class="product-content">
-                        <h3>TV Üniteleri</h3>
-                        <p>Modern televizyon üniteleri ile oturma odanıza şıklık katın. Kablo düzeni ve depolama çözümleri dahil.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="catalogs" class="section catalogs">
-        <div class="container">
             <h2 class="section-title">Ürün Katalogları</h2>
-            <p class="section-subtitle">Mobilyalarımızın detaylarına kataloglarımızdan ulaşabilir, PDF formatında indirebilirsiniz</p>
-            
-            <div id="pdf-grid" class="pdf-grid">
-                <div class="pdf-card">
-                    <div class="pdf-preview">
-                        <div class="pdf-preview-placeholder">
-                            <div class="loading"></div>
-                            <p style="margin-top: 1rem; font-size: 1rem;">Kataloglar yükleniyor...</p>
-                        </div>
-                    </div>
+            <p class="section-subtitle">PDF kataloglarınızı yükleyin ve görüntüleyin</p>
+
+            <div class="pdf-uploader fade-in-up">
+                <div class="upload-box">
+                    <input class="upload-input" type="file" id="pdfUpload" accept="application/pdf" multiple>
+                    <label for="pdfUpload" class="upload-label">
+                        <i class="fas fa-file-upload"></i>
+                        <span>PDF yükle</span>
+                        <small>Dosyalar sadece bu tarayıcı oturumunda görüntülenir.</small>
+                    </label>
+                </div>
+                <div class="pdf-actions-row">
+                    <span id="uploadStatus" class="pdf-item-size">Yüklenen dosyalar varsayılan PDF görüntüleyicide açılır.</span>
+                    <button class="pdf-clear-btn" id="pdfClearBtn" type="button">Listeyi Temizle</button>
+                </div>
+                <div id="pdfList" class="pdf-list">
+                    <div class="pdf-empty">Henüz PDF yüklenmedi.</div>
                 </div>
             </div>
         </div>
     </section>
-
-    <!-- Mobile-Optimized PDF Modal -->
-    <div id="pdfModal" class="pdf-modal">
-        <div class="pdf-modal-content">
-            <div class="pdf-modal-header">
-                <div>
-                    <h3 class="pdf-modal-title" id="modalTitle">PDF Görüntüleyici</h3>
-                    <div class="pdf-help-text" id="pdfHelpText">Yan tarafları dokunun, ortaya basın, 2 parmakla zoom yapın</div>
-                </div>
-                <button class="pdf-close" onclick="closePDFModal()" aria-label="Kapat">&times;</button>
-            </div>
-            <div class="pdf-viewer" id="pdfViewer">
-                <!-- PDF içeriği burada gösterilecek -->
-            </div>
-            <div class="pdf-controls">
-                <button class="pdf-nav-btn" id="prevPage" onclick="previousPage()" aria-label="Önceki Sayfa">◀ Önceki</button>
-                <span class="page-info">
-                    <span id="currentPage">1</span> / <span id="totalPages">1</span>
-                </span>
-                <button class="pdf-nav-btn" id="nextPage" onclick="nextPage()" aria-label="Sonraki Sayfa">Sonraki ▶</button>
-            </div>
-        </div>
-    </div>
 
     <section id="about" class="section about">
         <div class="container">
@@ -1509,1043 +1144,176 @@
             observer.observe(element);
         });
 
-        // PDF Yönetim Sistemi
-        let currentPDFDoc = null;
-        let currentPageNum = 1;
-        let totalPages = 0;
-        let pdfFiles = [];
+        // PDF Yönetim Sistemi - Basitleştirilmiş
+        let uploadedPDFs = [];
 
-        // Ultra tam ekran için yaklaştırma ve kaydırma durumu
-        let currentScale = 1;
-        let currentTranslateX = 0;
-        let currentTranslateY = 0;
-        let initialDistance = 0;
-        let initialScale = 1;
-        let isPinching = false;
-        let isPanning = false;
-        let lastPanX = 0;
-        let lastPanY = 0;
-        let lastTapTime = 0;
 
-        // Mobil cihaz algılama
-        function isMobileDevice() {
-            return window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // PDF.js işçi yapılandırması
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-
-                 // pdfs klasöründe mevcut PDF dosyaları (GitHub Pages hazır)
-         const commonPDFFiles = [
-             'genel-katalog.pdf',
-             'TOC_W07.pdf',
-             'Erendemir Katalog.pdf'
-         ];
-
-        // Sayfa yüklemesinde PDF kataloğunu başlat
+        // Sayfa yüklendiğinde PDF yükleyiciyi başlat
         document.addEventListener('DOMContentLoaded', function() {
-            loadPDFCatalog();
+            initializePDFUploader();
+            loadDefaultPDFs();
         });
 
-        // PDF kataloğunu yükle ve göster
-        async function loadPDFCatalog() {
-            const pdfGrid = document.getElementById('pdf-grid');
-            pdfFiles = [];
+        // PDF yükleyici başlatma
+        function initializePDFUploader() {
+            const pdfUpload = document.getElementById('pdfUpload');
+            const clearBtn = document.getElementById('pdfClearBtn');
 
-            try {
-                const availablePDFs = await detectPDFFiles();
-                
-                if (availablePDFs.length === 0) {
-                    showEmptyState(pdfGrid);
-                    return;
-                }
-
-                // Yükleme durumunu temizle
-                pdfGrid.innerHTML = '';
-
-                // PDF kartlarını oluştur
-                for (const pdfFile of availablePDFs) {
-                    await createPDFCard(pdfFile, pdfGrid);
-                }
-            } catch (error) {
-                console.error('Katalog yükleme hatası:', error);
-                showErrorState(pdfGrid);
-            }
+            pdfUpload.addEventListener('change', handlePDFUpload);
+            clearBtn.addEventListener('click', clearAllPDFs);
         }
 
-        function showEmptyState(container) {
-            container.innerHTML = `
-                <div class="pdf-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                    <div class="pdf-preview">
-                        <div class="pdf-preview-placeholder">
-                            <i class="fas fa-file-pdf" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.7;"></i>
-                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Henüz katalog yüklenmemiş</h3>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">PDF dosyalarınızı 'pdfs' klasörüne koyun</p>
-                        </div>
-                    </div>
-                    <div class="pdf-info">
-                        <h3>Katalog Yükleme Rehberi</h3>
-                        <p style="font-size: 0.9rem;">PDF kataloglarınızı göstermek için dosyalarınızı <strong>/pdfs/</strong> klasörüne koyun.</p>
-                    </div>
-                </div>
-            `;
-        }
-
-        function showErrorState(container) {
-            container.innerHTML = `
-                <div class="pdf-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
-                    <div class="pdf-preview">
-                        <div class="pdf-preview-placeholder">
-                            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; margin-bottom: 1rem; color: #e74c3c;"></i>
-                            <h3 style="color: white; margin-bottom: 1rem; font-size: 1.2rem;">Kataloglar yüklenemiyor</h3>
-                            <p style="color: rgba(255,255,255,0.8); font-size: 0.9rem;">Lütfen daha sonra tekrar deneyin</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
-        // Mevcut PDF dosyalarını algıla - Daha fazla PDF bulmak için geliştirilmiş
-        async function detectPDFFiles() {
-            const availablePDFs = [];
-            
-            // Önce, bilinen PDF dosyalarını dene
-            for (const filename of commonPDFFiles) {
-                try {
-                    const response = await fetch(`pdfs/${filename}`, { method: 'HEAD' });
-                    if (response.ok) {
-                        availablePDFs.push(filename);
-                    }
-                } catch (error) {
-                    // Dosya yok, devam et
-                }
-            }
-
-            // Var olabilecek ek yaygın PDF adlarını bulmaya çalış
-            const additionalPDFNames = [
-                'katalog.pdf',
-                'catalog.pdf',
-                'urunler.pdf',
-                'products.pdf',
-                'fiyat-listesi.pdf',
-                'price-list.pdf',
-                'yatak-odasi-katalog.pdf',
-                'oturma-odasi-katalog.pdf',
-                'yemek-odasi-katalog.pdf',
-                'mobilya-katalog.pdf',
-                'furniture-catalog.pdf'
+        // Varsayılan PDF'leri yükle (pdfs klasöründen)
+        async function loadDefaultPDFs() {
+            const defaultPDFs = [
+                { name: 'Genel Katalog', url: 'pdfs/genel-katalog.pdf' },
+                { name: 'TOC W07', url: 'pdfs/TOC_W07.pdf' },
+                { name: 'Erendemir Katalog', url: 'pdfs/Erendemir Katalog.pdf' }
             ];
 
-            for (const filename of additionalPDFNames) {
-                // Zaten bulunmuşsa atla
-                if (availablePDFs.includes(filename)) continue;
-                
+            for (const pdf of defaultPDFs) {
                 try {
-                    const response = await fetch(`pdfs/${filename}`, { method: 'HEAD' });
+                    const response = await fetch(pdf.url, { method: 'HEAD' });
                     if (response.ok) {
-                        availablePDFs.push(filename);
+                        uploadedPDFs.push({
+                            name: pdf.name,
+                            url: pdf.url,
+                            size: response.headers.get('content-length') || '0',
+                            isDefault: true
+                        });
                     }
                 } catch (error) {
-                    // Dosya yok, devam et
+                    console.log('PDF bulunamadı:', pdf.name);
                 }
             }
 
-            return availablePDFs;
+            updatePDFList();
         }
 
-        // Önizlemeli PDF kartı oluştur
-        async function createPDFCard(filename, container) {
-            const pdfPath = `pdfs/${filename}`;
-            const displayName = formatPDFName(filename);
-            const cardId = filename.replace(/[^a-zA-Z0-9]/g, '');
+        // PDF yükleme işlemini yönet
+        function handlePDFUpload(event) {
+            const files = event.target.files;
+            const uploadStatus = document.getElementById('uploadStatus');
 
-            // Mobil ve masaüstü için farklı davranış
-            const isMobile = isMobileDevice();
-            const openFunction = isMobile ? 'openMobileDirectPDF' : 'openPDFModal';
-            
-            const cardHtml = `
-                <div class="pdf-card" onclick="${openFunction}('${pdfPath}', '${displayName}')">
-                    <div class="pdf-preview" id="preview-${cardId}">
-                        <div class="pdf-preview-placeholder">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                    </div>
-                    <div class="pdf-info">
-                        <h3>${displayName}</h3>
-                        <div class="pdf-meta">
-                            <span><i class="far fa-file-alt"></i> PDF Katalog</span>
-                            <span class="pdf-size" id="size-${cardId}">...</span>
-                        </div>
-                        <div class="pdf-actions">
-                                                         <button class="pdf-btn pdf-btn-view" onclick="event.stopPropagation(); ${openFunction}('${pdfPath}', '${displayName}')" aria-label="${displayName} PDF'ini görüntüle" style="width: 100%;">
-                                 <i class="fas fa-eye"></i> Görüntüle
-                             </button>
-                        </div>
-                    </div>
-                </div>
-            `;
+            if (files.length === 0) return;
 
-            container.insertAdjacentHTML('beforeend', cardHtml);
+            uploadStatus.textContent = `${files.length} PDF dosyası yükleniyor...`;
+            uploadStatus.style.color = '#3498db';
 
-            // Önizleme oluştur ve dosya boyutunu al
-            try {
-                await generatePDFPreview(pdfPath, cardId);
-                await getFileSize(pdfPath, cardId);
-            } catch (error) {
-                console.error('PDF işleme hatası:', error);
-            }
-        }
-
-        // PDF önizleme küçük resmi oluştur (performans için mobilde atla)
-        async function generatePDFPreview(pdfPath, cardId) {
-            // Daha iyi performans için mobil cihazlarda önizleme oluşturmayı atla
-            if (isMobileDevice()) {
-                const previewContainer = document.getElementById(`preview-${cardId}`);
-                if (previewContainer) {
-                    previewContainer.innerHTML = `
-                        <div class="pdf-preview-placeholder">
-                            <i class="fas fa-file-pdf"></i>
-                        </div>
-                    `;
+            Array.from(files).forEach(file => {
+                if (file.type === 'application/pdf') {
+                    const fileURL = URL.createObjectURL(file);
+                    uploadedPDFs.push({
+                        name: file.name.replace('.pdf', ''),
+                        url: fileURL,
+                        size: file.size,
+                        isDefault: false,
+                        file: file
+                    });
                 }
+            });
+
+            updatePDFList();
+            event.target.value = ''; // Reset input
+
+            setTimeout(() => {
+                uploadStatus.textContent = `${files.length} PDF başarıyla yüklendi!`;
+                uploadStatus.style.color = '#27ae60';
+                setTimeout(() => {
+                    uploadStatus.textContent = '';
+                }, 3000);
+            }, 500);
+        }
+
+        // PDF listesini güncelle
+        function updatePDFList() {
+            const pdfList = document.getElementById('pdfList');
+            const clearBtn = document.getElementById('pdfClearBtn');
+
+            if (uploadedPDFs.length === 0) {
+                pdfList.innerHTML = '<div class="pdf-empty">Henüz PDF yüklenmedi.</div>';
+                clearBtn.style.display = 'none';
                 return;
             }
 
-            try {
-                const loadingTask = pdfjsLib.getDocument(pdfPath);
-                const pdf = await loadingTask.promise;
-                const page = await pdf.getPage(1);
+            clearBtn.style.display = 'inline-block';
 
-                const scale = 0.5;
-                const viewport = page.getViewport({ scale: scale });
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: viewport
-                };
-
-                await page.render(renderContext).promise;
-
-                const previewContainer = document.getElementById(`preview-${cardId}`);
-                if (previewContainer) {
-                    previewContainer.innerHTML = '';
-                    previewContainer.appendChild(canvas);
-                }
-            } catch (error) {
-                console.error('Önizleme oluşturma hatası:', error);
-                const previewContainer = document.getElementById(`preview-${cardId}`);
-                if (previewContainer) {
-                    previewContainer.innerHTML = `
-                        <div class="pdf-preview-placeholder">
-                            <i class="fas fa-file-pdf"></i>
+            pdfList.innerHTML = uploadedPDFs.map((pdf, index) => `
+                <div class="pdf-item">
+                    <div class="pdf-item-header">
+                        <div>
+                            <div class="pdf-item-title">
+                                <i class="fas fa-file-pdf" style="color: #e74c3c; margin-right: 0.5rem;"></i>
+                                ${pdf.name}
+                            </div>
+                            <div class="pdf-item-size">${formatFileSize(pdf.size)}${pdf.isDefault ? ' • Varsayılan' : ''}</div>
                         </div>
-                    `;
-                }
-            }
-        }
-
-        // Dosya boyutunu al
-        async function getFileSize(pdfPath, cardId) {
-            try {
-                const response = await fetch(pdfPath, { method: 'HEAD' });
-                const contentLength = response.headers.get('content-length');
-                if (contentLength) {
-                    const sizeInBytes = parseInt(contentLength);
-                    const sizeFormatted = formatFileSize(sizeInBytes);
-                    const sizeElement = document.getElementById(`size-${cardId}`);
-                    if (sizeElement) {
-                        sizeElement.textContent = sizeFormatted;
-                    }
-                }
-            } catch (error) {
-                console.error('Dosya boyutu alma hatası:', error);
-                const sizeElement = document.getElementById(`size-${cardId}`);
-                if (sizeElement) {
-                    sizeElement.textContent = 'PDF';
-                }
-            }
-        }
-
-        // Gösterim için PDF dosya adını formatla
-        function formatPDFName(filename) {
-            return filename
-                .replace(/\.pdf$/i, '')
-                .replace(/[-_]/g, ' ')
-                .replace(/\b\w/g, l => l.toUpperCase())
-                // Türkçe karakter düzeltmeleri ve kelime formatlanması
-                .replace(/Katalog/gi, 'Kataloğu')
-                .replace(/Odasi/gi, 'Odası')  
-                .replace(/Uniteleri/gi, 'Üniteleri')
-                .replace(/Sistemleri/gi, 'Sistemleri')
-                .replace(/Fiyat Listesi/gi, 'Fiyat Listesi')
-                .replace(/Genel/gi, 'Genel')
-                .replace(/Erendemir/gi, 'Erendemir')
-                .replace(/Toc/gi, 'TOC')
-                .replace(/W0(\d)/gi, 'W0$1')
-                // Bağımsız marka/kategori adlarına "Kataloğu" ekle
-                .replace(/^(Erendemir)$/gi, '$1 Kataloğu')
-                .replace(/^(Genel)$/gi, '$1 Katalog');
+                    </div>
+                    <div class="pdf-item-actions">
+                        <a href="${pdf.url}" target="_blank" class="pdf-link-btn">
+                            <i class="fas fa-external-link-alt"></i> Görüntüle
+                        </a>
+                        ${!pdf.isDefault ? `
+                            <button class="pdf-remove-btn" onclick="removePDF(${index})">
+                                <i class="fas fa-times"></i> Kaldır
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
         }
 
         // Dosya boyutunu formatla
         function formatFileSize(bytes) {
-            if (bytes === 0) return '0 B';
+            if (!bytes || bytes === '0') return 'Bilinmiyor';
+            const numBytes = parseInt(bytes);
+            if (isNaN(numBytes)) return 'Bilinmiyor';
+            if (numBytes === 0) return '0 B';
             const k = 1024;
             const sizes = ['B', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+            const i = Math.floor(Math.log(numBytes) / Math.log(k));
+            return parseFloat((numBytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
         }
 
-        // Mobil için PDF'i doğrudan ultra tam ekranda aç
-        async function openMobileDirectPDF(pdfPath, title) {
-            const modal = document.getElementById('pdfModal');
-            const pdfViewer = document.getElementById('pdfViewer');
-
-            pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
-            modal.style.display = 'block';
-            modal.classList.add('fullscreen');
-            modal.classList.add('ultra-fullscreen'); // Mobil için ultra tam ekranda başlat
+        // PDF'i listeden kaldır
+        function removePDF(index) {
+            const pdf = uploadedPDFs[index];
             
-            // Yaklaştırma durumunu sıfırla
-            resetZoomPan();
-            
-            // Gövde kaydırmasını engelle
-            document.body.style.overflow = 'hidden';
-
-            // Tam ekran modunu talep et
-            try {
-                if (modal.requestFullscreen) {
-                    await modal.requestFullscreen();
-                } else if (modal.webkitRequestFullscreen) {
-                    await modal.webkitRequestFullscreen();
-                } else if (modal.mozRequestFullScreen) {
-                    await modal.mozRequestFullScreen();
-                } else if (modal.msRequestFullscreen) {
-                    await modal.msRequestFullscreen();
-                }
-            } catch (error) {
-                console.log('Fullscreen request failed:', error);
-            }
-
-            // Mobil cihazlarda yatay yönelimi zorla
-            try {
-                if (screen.orientation && screen.orientation.lock) {
-                    await screen.orientation.lock('landscape');
-                }
-            } catch (error) {
-                console.log('Ekran yönelimi kilitleme desteklenmiyor veya başarısız oldu');
-            }
-
-            try {
-                const loadingTask = pdfjsLib.getDocument(pdfPath);
-                currentPDFDoc = await loadingTask.promise;
-                totalPages = currentPDFDoc.numPages;
-                currentPageNum = 1;
-
-                await renderPDFPage(currentPageNum);
-            } catch (error) {
-                console.error('PDF yükleme hatası:', error);
-                pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: white;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                        <h3 style="margin-bottom: 0.5rem;">PDF Yüklenemedi</h3>
-                        <p style="font-size: 0.9rem;">Dosya bulunamadı veya bozuk olabilir.</p>
-                    </div>
-                `;
-            }
-        }
-
-        // PDF'i tam ekran modalda aç - Masaüstü Optimizasyonlu
-        async function openPDFModal(pdfPath, title) {
-            const modal = document.getElementById('pdfModal');
-            const modalTitle = document.getElementById('modalTitle');
-            const pdfViewer = document.getElementById('pdfViewer');
-
-            modalTitle.textContent = title;
-            pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
-            modal.style.display = 'block';
-            modal.classList.add('fullscreen');
-            
-            // Cihaz türüne göre yardım metnini güncelle
-            const helpText = document.getElementById('pdfHelpText');
-            if (isMobileDevice()) {
-                helpText.textContent = 'Kaydırın, ortaya basın, 2 parmakla zoom yapın';
-            } else {
-                helpText.textContent = 'Yan tarafları dokunun, ortaya basın, 2 parmakla zoom yapın';
+            // Yüklenen dosyalar için URL'yi iptal et
+            if (!pdf.isDefault && pdf.url.startsWith('blob:')) {
+                URL.revokeObjectURL(pdf.url);
             }
             
-            // Gövde kaydırmasını engelle
-            document.body.style.overflow = 'hidden';
-
-            // Tam ekran modunu talep et
-            try {
-                if (modal.requestFullscreen) {
-                    await modal.requestFullscreen();
-                } else if (modal.webkitRequestFullscreen) {
-                    await modal.webkitRequestFullscreen();
-                } else if (modal.mozRequestFullScreen) {
-                    await modal.mozRequestFullScreen();
-                } else if (modal.msRequestFullscreen) {
-                    await modal.msRequestFullscreen();
-                }
-            } catch (error) {
-                console.log('Fullscreen request failed:', error);
-            }
-
-            // Mobil cihazlarda yatay yönelimi zorla
-            try {
-                if (screen.orientation && screen.orientation.lock) {
-                    await screen.orientation.lock('landscape');
-                }
-            } catch (error) {
-                console.log('Ekran yönelimi kilitleme desteklenmiyor veya başarısız oldu');
-            }
-
-            try {
-                const loadingTask = pdfjsLib.getDocument(pdfPath);
-                currentPDFDoc = await loadingTask.promise;
-                totalPages = currentPDFDoc.numPages;
-                currentPageNum = 1;
-
-                await renderPDFPage(currentPageNum);
-                updatePageControls();
-            } catch (error) {
-                console.error('PDF yükleme hatası:', error);
-                pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: white;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2.5rem; margin-bottom: 1rem;"></i>
-                        <h3 style="margin-bottom: 0.5rem;">PDF Yüklenemedi</h3>
-                        <p style="font-size: 0.9rem;">Dosya bulunamadı veya bozuk olabilir.</p>
-                    </div>
-                `;
-            }
+            uploadedPDFs.splice(index, 1);
+            updatePDFList();
         }
 
-        // Mobil sürekli kaydırma için tüm PDF sayfalarını render et
-        async function renderAllPDFPages() {
-            const pdfViewer = document.getElementById('pdfViewer');
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            
-            try {
-                // Tüm sayfaları render ederken yüklemeyi göster
-                pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
-                
-                const pagesContainer = document.createElement('div');
-                pagesContainer.style.display = 'flex';
-                pagesContainer.style.flexDirection = 'column';
-                pagesContainer.style.gap = '1rem';
-                pagesContainer.style.padding = '1rem';
-                pagesContainer.style.alignItems = 'center';
-                
-                for (let pageNum = 1; pageNum <= totalPages; pageNum++) {
-                    const page = await currentPDFDoc.getPage(pageNum);
-                    const viewport = page.getViewport({ scale: 1 });
-                    
-                    // Mobil için ölçeği hesapla
-                    const viewerWidth = pdfViewer.clientWidth - 32; // Padding'i hesaba kat
-                    let scale;
-                    
-                    if (isUltraFullscreen) {
-                        scale = Math.max(viewerWidth / viewport.width * 1.2, 1.5);
-                    } else {
-                        scale = viewerWidth / viewport.width;
-                    }
-                    
-                    const scaledViewport = page.getViewport({ scale: scale });
-                    
-                    const canvas = document.createElement('canvas');
-                    const context = canvas.getContext('2d');
-                    canvas.height = scaledViewport.height;
-                    canvas.width = scaledViewport.width;
-                    
-                    // Canvas'u stillendir
-                    canvas.style.display = 'block';
-                    canvas.style.boxShadow = '0 4px 16px rgba(255,255,255,0.1)';
-                    canvas.style.borderRadius = '4px';
-                    canvas.style.marginBottom = '1rem';
-                    canvas.style.maxWidth = '100%';
-                    canvas.style.height = 'auto';
-                    
-                    const renderContext = {
-                        canvasContext: context,
-                        viewport: scaledViewport
-                    };
-                    
-                    await page.render(renderContext).promise;
-                    pagesContainer.appendChild(canvas);
-                }
-                
-                pdfViewer.innerHTML = '';
-                pdfViewer.appendChild(pagesContainer);
-                
-                // Yaklaştırma dönüşümünü uygula
-                pagesContainer.style.transformOrigin = 'center center';
-                pagesContainer.style.willChange = 'transform';
-                
-                if (currentScale !== 1 || currentTranslateX !== 0 || currentTranslateY !== 0) {
-                    const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
-                    pagesContainer.style.transform = transform;
-                    pagesContainer.style.transition = 'transform 0.1s ease-out';
-                } else {
-                    pagesContainer.style.transform = 'none';
-                }
-                
-            } catch (error) {
-                console.error('Sayfaları render etme hatası:', error);
-                pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: white;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>PDF yüklenemiyor</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Masaüstü için optimize edilmiş PDF sayfasını render et (tek sayfa modu)
-        async function renderSinglePDFPage(pageNum) {
-            try {
-                const page = await currentPDFDoc.getPage(pageNum);
-                const pdfViewer = document.getElementById('pdfViewer');
-                const modal = document.getElementById('pdfModal');
-                const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-                
-                let scale, scaledViewport;
-                
-                if (isUltraFullscreen) {
-                    // Ultra tam ekran modu - PDF'i daha büyük ve kaydırılabilir yap
-                    const viewport = page.getViewport({ scale: 1 });
-                    // Metni daha okunabilir yapmak için ultra tam ekranda daha yüksek ölçek kullan
-                    scale = Math.max(window.innerWidth / viewport.width * 1.2, 2.0);
-                    scaledViewport = page.getViewport({ scale: scale });
-                } else {
-                    // Normal tam ekran modu - ekrana sığdır
-                    const viewerWidth = pdfViewer.clientWidth - 16;
-                    const viewerHeight = pdfViewer.clientHeight - 16;
-                    const viewport = page.getViewport({ scale: 1 });
-                    
-                    const scaleX = viewerWidth / viewport.width;
-                    const scaleY = viewerHeight / viewport.height;
-                    scale = Math.min(scaleX, scaleY);
-                    scaledViewport = page.getViewport({ scale: scale });
-                }
-
-                const canvas = document.createElement('canvas');
-                const context = canvas.getContext('2d');
-                canvas.height = scaledViewport.height;
-                canvas.width = scaledViewport.width;
-                
-                // Moda göre canvas'u stillendir
-                if (isUltraFullscreen) {
-                    canvas.style.display = 'block';
-                    canvas.style.margin = '0 auto';
-                    canvas.style.width = scaledViewport.width + 'px';
-                    canvas.style.height = scaledViewport.height + 'px';
-                    canvas.style.minWidth = '100vw';
-                } else {
-                    canvas.style.maxWidth = '100%';
-                    canvas.style.maxHeight = '100%';
-                    canvas.style.objectFit = 'contain';
-                    canvas.style.borderRadius = '4px';
-                }
-                
-                canvas.style.boxShadow = '0 8px 32px rgba(255,255,255,0.1)';
-
-                const renderContext = {
-                    canvasContext: context,
-                    viewport: scaledViewport
-                };
-
-                // Render ederken yüklemeyi göster
-                pdfViewer.innerHTML = '<div class="loading" style="margin: 2rem auto; color: white;"></div>';
-
-                await page.render(renderContext).promise;
-
-                pdfViewer.innerHTML = '';
-                pdfViewer.appendChild(canvas);
-
-                // Kaydırma pozisyonunu sıfırla
-                pdfViewer.scrollTop = 0;
-                pdfViewer.scrollLeft = 0;
-            } catch (error) {
-                console.error('Sayfa render etme hatası:', error);
-                const pdfViewer = document.getElementById('pdfViewer');
-                pdfViewer.innerHTML = `
-                    <div style="text-align: center; padding: 2rem; color: white;">
-                        <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
-                        <p>Sayfa yüklenemiyor</p>
-                    </div>
-                `;
-            }
-        }
-
-        // Ana render fonksiyonu - mobil veya masaüstü modunu seçer
-        async function renderPDFPage(pageNum) {
-            if (isMobileDevice()) {
-                await renderAllPDFPages();
-            } else {
-                await renderSinglePDFPage(pageNum);
-            }
-        }
-
-        // Sayfa navigasyon kontrollerini güncelle
-        function updatePageControls() {
-            const currentPageElement = document.getElementById('currentPage');
-            const totalPagesElement = document.getElementById('totalPages');
-            const prevButton = document.getElementById('prevPage');
-            const nextButton = document.getElementById('nextPage');
-
-            if (currentPageElement) currentPageElement.textContent = currentPageNum;
-            if (totalPagesElement) totalPagesElement.textContent = totalPages;
-            if (prevButton) prevButton.disabled = currentPageNum <= 1;
-            if (nextButton) nextButton.disabled = currentPageNum >= totalPages;
-        }
-
-        // Önceki sayfaya git
-        async function previousPage() {
-            if (currentPageNum > 1) {
-                currentPageNum--;
-                await renderPDFPage(currentPageNum);
-                updatePageControls();
-            }
-        }
-
-        // Sonraki sayfaya git
-        async function nextPage() {
-            if (currentPageNum < totalPages) {
-                currentPageNum++;
-                await renderPDFPage(currentPageNum);
-                updatePageControls();
-            }
-        }
-
-        // Yaklaştırma ve kaydırma durumunu sıfırla
-        function resetZoomPan() {
-            currentScale = 1;
-            currentTranslateX = 0;
-            currentTranslateY = 0;
-            isPinching = false;
-            isPanning = false;
-        }
-
-        // PDF canvas'ına veya konteynerine dönüşüm uygula
-        function applyCanvasTransform() {
-            const isMobile = isMobileDevice();
-            
-            if (isMobile) {
-                // Mobil: Sayfalar konteynerine dönüşüm uygula
-                const container = document.querySelector('#pdfViewer > div');
-                if (container) {
-                    const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
-                    container.style.transform = transform;
-                    container.style.transformOrigin = 'center center';
-                    container.style.willChange = 'transform';
-                }
-            } else {
-                // Masaüstü: Tek canvas'a dönüşüm uygula
-                const canvas = document.querySelector('#pdfViewer canvas');
-                if (canvas) {
-                    const transform = `translate(${currentTranslateX}px, ${currentTranslateY}px) scale(${currentScale})`;
-                    canvas.style.transform = transform;
-                    canvas.style.transformOrigin = 'center center';
-                    canvas.style.willChange = 'transform';
-                }
-            }
-        }
-
-        // İki dokunma noktası arasındaki mesafeyi hesapla
-        function getDistance(touches) {
-            if (touches.length < 2) return 0;
-            const dx = touches[0].clientX - touches[1].clientX;
-            const dy = touches[0].clientY - touches[1].clientY;
-            return Math.sqrt(dx * dx + dy * dy);
-        }
-
-        // İki dokunma arasındaki merkez noktasını al
-        function getCenter(touches) {
-            if (touches.length < 2) return { x: touches[0].clientX, y: touches[0].clientY };
-            return {
-                x: (touches[0].clientX + touches[1].clientX) / 2,
-                y: (touches[0].clientY + touches[1].clientY) / 2
-            };
-        }
-
-        // Ultra tam ekran modunu aç/kapat
-        function toggleUltraFullscreen() {
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            const isMobile = isMobileDevice();
-            
-            if (isMobile) {
-                // Mobil: Her zaman ultra tam ekranda kal, sadece aç/kapatmada kapat
-                closePDFModal();
+        // Tüm PDF'leri temizle
+        function clearAllPDFs() {
+            if (!confirm('Yüklenen tüm PDF dosyalarını silmek istediğinizden emin misiniz?')) {
                 return;
             }
-            
-            if (isUltraFullscreen) {
-                // Ultra tam ekrandan çık (sadece masaüstü)
-                modal.classList.remove('ultra-fullscreen');
-                resetZoomPan();
-            } else {
-                // Ultra tam ekrana gir (sadece masaüstü)
-                modal.classList.add('ultra-fullscreen');
-                resetZoomPan();
-            }
-            
-            // Re-render current page to adjust canvas size
-            if (currentPDFDoc && currentPageNum) {
-                setTimeout(() => {
-                    renderPDFPage(currentPageNum);
-                }, 100);
-            }
-        }
 
-        // PDF modalini kapat ve tam ekrandan çık
-        function closePDFModal() {
-            const modal = document.getElementById('pdfModal');
-            
-            // Exit fullscreen mode
-            try {
-                if (document.exitFullscreen) {
-                    document.exitFullscreen();
-                } else if (document.webkitExitFullscreen) {
-                    document.webkitExitFullscreen();
-                } else if (document.mozCancelFullScreen) {
-                    document.mozCancelFullScreen();
-                } else if (document.msExitFullscreen) {
-                    document.msExitFullscreen();
+            // Yüklenen dosyalar için URL'leri iptal et
+            uploadedPDFs.forEach(pdf => {
+                if (!pdf.isDefault && pdf.url.startsWith('blob:')) {
+                    URL.revokeObjectURL(pdf.url);
                 }
-            } catch (error) {
-                console.log('Tam ekrandan çıkış başarısız:', error);
-            }
-            
-            modal.style.display = 'none';
-            modal.classList.remove('fullscreen');
-            modal.classList.remove('ultra-fullscreen');
-            currentPDFDoc = null;
-            resetZoomPan();
-            
-            // Restore body scroll
-            document.body.style.overflow = 'auto';
-            
-            // Unlock screen orientation
-            try {
-                if (screen.orientation && screen.orientation.unlock) {
-                    screen.orientation.unlock();
-                }
-            } catch (error) {
-                console.log('Ekran yönelimi kilit açma desteklenmiyor veya başarısız oldu');
-            }
-        }
+            });
 
-        // Enhanced touch and keyboard controls for PDF modal
-        let touchStartX = 0;
-        let touchStartY = 0;
-        let touchStartTime = 0;
+            uploadedPDFs = [];
+            updatePDFList();
 
-        document.getElementById('pdfViewer').addEventListener('touchstart', function(e) {
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            const isMobile = isMobileDevice();
-            
-            if (e.touches.length === 2) {
-                // İki parmak sıkıştırma başlangıcı (hem mobil hem masaüstü)
-                isPinching = true;
-                isPanning = false;
-                initialDistance = getDistance(e.touches);
-                initialScale = currentScale;
-                
-                // Disable smooth transition during pinch
-                const container = document.querySelector('#pdfViewer > div') || document.querySelector('#pdfViewer canvas');
-                if (container) {
-                    container.style.transition = 'none';
-                    container.style.willChange = 'transform';
-                }
-                
-                e.preventDefault();
-                e.stopPropagation();
-            } else if (e.touches.length === 1) {
-                if ((isMobile && currentScale > 1) || (isUltraFullscreen && currentScale > 1)) {
-                    // Tek parmak kaydırma başlangıcı (mobil: yaklaştırılmışsa her zaman, masaüstü: sadece ultra tam ekranda yaklaştırılmışsa)
-                    isPanning = true;
-                    isPinching = false;
-                    lastPanX = e.touches[0].clientX;
-                    lastPanY = e.touches[0].clientY;
-                    
-                    // Disable smooth transition during pan
-                    const container = document.querySelector('#pdfViewer > div') || document.querySelector('#pdfViewer canvas');
-                    if (container) {
-                        container.style.transition = 'none';
-                        container.style.willChange = 'transform';
-                    }
-                    
-                    e.preventDefault();
-                } else {
-                    // Navigasyon için normal dokunma
-                    touchStartX = e.touches[0].clientX;
-                    touchStartY = e.touches[0].clientY;
-                    touchStartTime = Date.now();
-                    isPinching = false;
-                    isPanning = false;
-                }
-            }
-        }, { passive: false });
-
-        document.getElementById('pdfViewer').addEventListener('touchmove', function(e) {
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            const isMobile = isMobileDevice();
-            
-            if (isPinching && e.touches.length === 2) {
-                // Sıkıştırma yaklaştırmasını işle (hem mobil hem masaüstü)
-                const currentDistance = getDistance(e.touches);
-                if (initialDistance > 0 && currentDistance > 0) {
-                    const scaleChange = currentDistance / initialDistance;
-                    const newScale = initialScale * scaleChange;
-                    
-                    // Mobil için daha hassas ölçeklendirme
-                    if (isMobile) {
-                        currentScale = Math.max(0.3, Math.min(8, newScale));
-                    } else {
-                        currentScale = Math.max(0.5, Math.min(5, newScale));
-                    }
-                    
-                    applyCanvasTransform();
-                }
-                e.preventDefault();
-                e.stopPropagation();
-            } else if (isPanning && e.touches.length === 1) {
-                // Kaydırmayı işle (hem mobil hem masaüstü, ancak mobil farklı çalışır)
-                const deltaX = e.touches[0].clientX - lastPanX;
-                const deltaY = e.touches[0].clientY - lastPanY;
-                
-                if (isMobile || isUltraFullscreen) {
-                    // Mobil veya ultra tam ekran: kaydırmaya izin ver
-                    currentTranslateX += deltaX;
-                    currentTranslateY += deltaY;
-                    
-                    lastPanX = e.touches[0].clientX;
-                    lastPanY = e.touches[0].clientY;
-                    
-                    applyCanvasTransform();
-                    e.preventDefault();
-                    e.stopPropagation();
-                }
-            }
-        }, { passive: false });
-
-        document.getElementById('pdfViewer').addEventListener('touchend', function(e) {
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            const isMobile = isMobileDevice();
-            
-            // Re-enable smooth transition
-            const container = document.querySelector('#pdfViewer > div') || document.querySelector('#pdfViewer canvas');
-            if (container) {
-                container.style.transition = 'transform 0.1s ease-out';
-            }
-            
-            if (isPinching || isPanning) {
-                // Sıkıştırma veya kaydırma hareketini sonlandır
-                isPinching = false;
-                isPanning = false;
-                return;
-            }
-            
-            // Mobil ve masaüstü için farklı davranış
-            if (isMobile) {
-                // Mobil: Kapatmak için tek dokunma, yaklaştırmayı sıfırlamak için çift dokunma
-                if (e.changedTouches.length > 0) {
-                    const touchEndX = e.changedTouches[0].clientX;
-                    const touchEndY = e.changedTouches[0].clientY;
-                    const touchEndTime = Date.now();
-                    const touchDuration = touchEndTime - touchStartTime;
-                    const diffX = touchStartX - touchEndX;
-                    const diffY = touchStartY - touchEndY;
-                    const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-
-                    // Sadece hızlı dokunmaları işle (mobilde kaydırma veya yan dokunma navigasyonu yok)
-                    if (distance < 10 && touchDuration < 300) {
-                        const currentTime = Date.now();
-                        const isDoubleTap = currentTime - lastTapTime < 300;
-                        lastTapTime = currentTime;
-                        
-                        if (isDoubleTap && currentScale > 1) {
-                            // Çift dokunma - yaklaştırmayı sıfırla
-                            resetZoomPan();
-                            applyCanvasTransform();
-                            return;
-                        } else if (!isDoubleTap) {
-                            // Tek dokunma - PDF'i kapat (mobil her zaman ultra tam ekranda başlar)
-                            setTimeout(() => {
-                                if (currentTime === lastTapTime) { // Çift dokunma olmadığından emin ol
-                                    closePDFModal();
-                                }
-                            }, 300);
-                            return;
-                        }
-                    }
-                }
-            } else {
-                // Masaüstü: Yan dokunma navigasyonu ile eski davranışı koru
-                if (e.changedTouches.length > 0) {
-                    const touchEndX = e.changedTouches[0].clientX;
-                    const touchEndY = e.changedTouches[0].clientY;
-                    const touchEndTime = Date.now();
-                    const touchDuration = touchEndTime - touchStartTime;
-                    const diffX = touchStartX - touchEndX;
-                    const diffY = touchStartY - touchEndY;
-                    const distance = Math.sqrt(diffX * diffX + diffY * diffY);
-
-                    // Quick tap detection with side navigation
-                    if (distance < 10 && touchDuration < 300) {
-                        const currentTime = Date.now();
-                        const isDoubleTap = currentTime - lastTapTime < 300;
-                        lastTapTime = currentTime;
-                        
-                        const viewerWidth = e.currentTarget.clientWidth;
-                        const tapZoneWidth = viewerWidth * 0.25; // 25% of viewer width on each side
-                        
-                        if (touchEndX < tapZoneWidth) {
-                            // Left side tap - previous page
-                            previousPage();
-                            return;
-                        } else if (touchEndX > viewerWidth - tapZoneWidth) {
-                            // Right side tap - next page
-                            nextPage();
-                            return;
-                        } else {
-                            // Center tap
-                            if (isUltraFullscreen && isDoubleTap && currentScale > 1) {
-                                // Ultra tam ekranda çift dokunma - yaklaştırmayı sıfırla
-                                resetZoomPan();
-                                applyCanvasTransform();
-                                return;
-                            } else {
-                                // Tek dokunma - ultra tam ekranı aç/kapat
-                                toggleUltraFullscreen();
-                                return;
-                            }
-                        }
-                    }
-
-                    // Yatay kaydırma algılama (sadece masaüstü)
-                    if (!isUltraFullscreen) {
-                        if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 30 && touchDuration < 800) {
-                            if (diffX > 0) {
-                                // Swipe left - next page
-                                nextPage();
-                            } else {
-                                // Swipe right - previous page
-                                previousPage();
-                            }
-                        }
-                    }
-                }
-            }
-        }, { passive: true });
-
-        // Sadece masaüstü için fare tekerleği yaklaştırma desteği
-        document.getElementById('pdfViewer').addEventListener('wheel', function(e) {
-            const modal = document.getElementById('pdfModal');
-            const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-            const isMobile = isMobileDevice();
-            
-            // Mobil cihazlarda atla
-            if (isMobile) return;
-            
-            if (isUltraFullscreen && e.ctrlKey) {
-                e.preventDefault();
-                
-                const scaleFactor = e.deltaY > 0 ? 0.9 : 1.1;
-                const newScale = currentScale * scaleFactor;
-                currentScale = Math.max(0.5, Math.min(5, newScale));
-                
-                applyCanvasTransform();
-            }
-        }, { passive: false });
-
-        // Dışarıya tıklandığında veya escape'e basıldığında modali kapat
-        window.onclick = function(event) {
-            const modal = document.getElementById('pdfModal');
-            if (event.target === modal) {
-                closePDFModal();
-            }
-        }
-
-        // Klavye kontrollerini işle
-        document.addEventListener('keydown', function(event) {
-            const modal = document.getElementById('pdfModal');
-            if (modal.style.display === 'block') {
-                const isUltraFullscreen = modal.classList.contains('ultra-fullscreen');
-                
-                if (event.key === 'Escape') {
-                    if (isUltraFullscreen) {
-                        // İlk ESC: ultra tam ekrandan çık
-                        toggleUltraFullscreen();
-                    } else {
-                        // İkinci ESC: modali kapat
-                        closePDFModal();
-                    }
-                } else if (event.key === 'Enter' || event.key === ' ') {
-                    // Enter veya Space: ultra tam ekranı aç/kapat
-                    event.preventDefault();
-                    toggleUltraFullscreen();
-                } else if (!isUltraFullscreen) {
-                    // Yön tuşları sadece normal modda çalışır (ultra tam ekranda değil)
-                    if (event.key === 'ArrowLeft') {
-                        previousPage();
-                    } else if (event.key === 'ArrowRight') {
-                        nextPage();
-                    }
-                }
-            }
-        });
-
-        // Yönelim değişikliğini işle
-        window.addEventListener('orientationchange', function() {
+            const uploadStatus = document.getElementById('uploadStatus');
+            uploadStatus.textContent = 'Tüm PDF dosyaları temizlendi.';
+            uploadStatus.style.color = '#95a5a6';
             setTimeout(() => {
-                if (currentPDFDoc && currentPageNum) {
-                    renderPDFPage(currentPageNum);
-                }
-            }, 100);
-        });
+                uploadStatus.textContent = '';
+            }, 3000);
 
-        // Pencere boyutlandırmasını işle
-        let resizeTimeout;
-        window.addEventListener('resize', function() {
-            clearTimeout(resizeTimeout);
-            resizeTimeout = setTimeout(() => {
-                if (currentPDFDoc && currentPageNum) {
-                    renderPDFPage(currentPageNum);
-                }
-            }, 250);
-        }, { passive: true });
-
-        // Tam ekran değişiklik olaylarını işle
-        function handleFullscreenChange() {
-            const modal = document.getElementById('pdfModal');
-            const isFullscreen = !!(document.fullscreenElement || 
-                                   document.webkitFullscreenElement || 
-                                   document.mozFullScreenElement || 
-                                   document.msFullscreenElement);
-            
-            // Artık tam ekranda değilsek ve modal açıksa, kapat
-            if (!isFullscreen && modal.style.display === 'block') {
-                closePDFModal();
-            }
+            // Varsayılan PDF'leri tekrar yükle
+            loadDefaultPDFs();
         }
-
-       
-        document.addEventListener('fullscreenchange', handleFullscreenChange);
-        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
-        document.addEventListener('mozfullscreenchange', handleFullscreenChange);
-        document.addEventListener('MSFullscreenChange', handleFullscreenChange);
     </script>
 </body>
 </html>
